@@ -253,11 +253,32 @@ public class RhinoManager(
                     return false;
                 }
             }
-            // Last slot — fall through to process kill.
+            // Last slot — fall through to cooperative quit.
         }
 
+        // Cooperative shutdown: ask Rhino to quit itself via _Exit, then wait
+        // for the OS process to actually exit. SIGKILL is reserved for the
+        // case where graceful quit doesn't land in time — it's reliable but
+        // leaves the TCP listener alive briefly, which races ScanAnnouncements.
+        log.LogInformation("Closing slot '{Slot}' cooperatively (pid {Pid})", slotId, child.Pid);
+        try
+        {
+            await control.QuitAppAsync(child.Endpoint, ct).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            log.LogWarning(ex, "Quit-app control call for slot '{Slot}' failed; falling through to kill.", slotId);
+        }
+
+        if (await WaitForProcessExitAsync(child.Pid, TimeSpan.FromSeconds(15), ct).ConfigureAwait(false))
+        {
+            store.Delete(slotId);
+            log.LogInformation("Slot '{Slot}' exited gracefully (pid {Pid})", slotId, child.Pid);
+            return true;
+        }
+
+        log.LogWarning("Slot '{Slot}' did not exit within timeout; killing pid {Pid}", slotId, child.Pid);
         store.Delete(slotId);
-        log.LogInformation("Closing slot '{Slot}' (pid {Pid})", slotId, child.Pid);
         try
         {
             Process.GetProcessById(child.Pid).Kill(entireProcessTree: true);
@@ -267,7 +288,22 @@ public class RhinoManager(
         {
             log.LogWarning(ex, "Failed to kill slot '{Slot}' (pid {Pid})", slotId, child.Pid);
         }
+        // SIGKILL is async; wait for the OS to reap the pid so callers don't
+        // observe a 'closed' slot whose process+listener are still around.
+        await WaitForProcessExitAsync(child.Pid, TimeSpan.FromSeconds(5), ct).ConfigureAwait(false);
         return true;
+    }
+
+    private static async Task<bool> WaitForProcessExitAsync(int pid, TimeSpan timeout, CancellationToken ct)
+    {
+        var deadline = DateTime.UtcNow + timeout;
+        while (DateTime.UtcNow < deadline)
+        {
+            if (!IsProcessAlive(pid)) return true;
+            try { await Task.Delay(100, ct).ConfigureAwait(false); }
+            catch (OperationCanceledException) { return !IsProcessAlive(pid); }
+        }
+        return !IsProcessAlive(pid);
     }
 
     // Shutdown path: kill each unique pid this router owns. Adopted slots and slots

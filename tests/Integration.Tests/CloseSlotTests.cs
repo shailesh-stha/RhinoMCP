@@ -7,25 +7,8 @@ namespace RhMcp.Integration.Tests;
 // Exercises the router's close_slot tool directly. No Rhino install required —
 // these tests run against a freshly-spawned router with an isolated state dir.
 [TestFixture]
-public sealed class CloseSlotTests
+internal sealed class CloseSlotTests : SharedRouterFixture
 {
-    private RhinoMcpRouter _router = null!;
-
-    [OneTimeSetUp]
-    public async Task SetUp()
-    {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
-    [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        if (_router is not null)
-        {
-            await _router.DisposeAsync();
-        }
-    }
-
     // Regression: a status-agnostic existence check is required so launching
     // slots are not mistaken for missing slots. The structured shape
     // (closed=false, error="slot_not_found", message=...) is what agents key

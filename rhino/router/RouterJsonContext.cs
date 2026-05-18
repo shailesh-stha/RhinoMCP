@@ -21,6 +21,7 @@ namespace RhMcp.Router;
 [JsonSerializable(typeof(JsonRpcRequestParams))]
 [JsonSerializable(typeof(SpawnListenerArgs))]
 [JsonSerializable(typeof(CloseListenerArgs))]
+[JsonSerializable(typeof(QuitAppArgs))]
 [JsonSerializable(typeof(Announcement))]
 [JsonSerializable(typeof(CloseSlotResult))]
 [JsonSerializable(typeof(JsonObject))]
@@ -93,6 +94,8 @@ public sealed record SpawnListenerArgs();
 
 public sealed record CloseListenerArgs(
     [property: JsonPropertyName("port")] int Port);
+
+public sealed record QuitAppArgs();
 
 // close_slot's structured response. `closed=true` is the happy path;
 // `closed=false` covers both "no such slot" and "refused" cases, with `error`

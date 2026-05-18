@@ -11,25 +11,8 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-public sealed class ListSlotsShapeTests
+internal sealed class ListSlotsShapeTests : RouterFixture
 {
-    private RhinoMcpRouter _router = null!;
-
-    [SetUp]
-    public async Task SetUp()
-    {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
-    [TearDown]
-    public async Task TearDown()
-    {
-        if (_router is not null)
-        {
-            await _router.DisposeAsync();
-        }
-    }
-
     [Test]
     public async Task list_slots_after_spawn_contains_expected_fields()
     {

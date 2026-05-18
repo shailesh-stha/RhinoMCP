@@ -22,18 +22,8 @@ public static class CloseDocTool
         if (!string.IsNullOrEmpty(dir) && !System.IO.Directory.Exists(dir))
             throw new System.IO.DirectoryNotFoundException($"Directory does not exist: {dir}");
 
-        var options = new FileWriteOptions
-        {
-            SuppressDialogBoxes = true,
-            WriteUserData = true,
-            UpdateDocumentPath = true,
-        };
-
-        if (!doc.WriteFile(path, options))
-            throw new InvalidOperationException($"Failed to save: {path}");
-
         doc.Modified = false;
-        RhinoApp.RunScript(doc.RuntimeSerialNumber, "_-Close", false);
+        RhinoApp.RunScript(doc.RuntimeSerialNumber, $"_-Close {path}", false);
         return hasPath ? $"Document saved to {path} and closed." : "Document closed without saving.";
     }
 }

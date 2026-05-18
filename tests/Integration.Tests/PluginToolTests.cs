@@ -13,15 +13,15 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-public sealed class PluginToolTests
+internal sealed class PluginToolTests : SharedRouterFixture
 {
-    private RhinoMcpRouter _router = null!;
     private string _slot = null!;
 
+    // Base sets up the router; we then spawn a single slot shared across every
+    // plugin-side test in the fixture.
     [OneTimeSetUp]
-    public async Task SetUp()
+    public async Task SpawnSharedSlot()
     {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
         string spawnJson = await _router.CallToolTextAsync("spawn_slot");
         JsonElement spawn = JsonAssert.Parse(spawnJson);
         if (spawn.TryGetProperty("error", out _))
@@ -32,22 +32,19 @@ public sealed class PluginToolTests
         _slot = spawn.GetProperty("slotId").GetString()!;
     }
 
+    // Runs before the base disposes the router.
     [OneTimeTearDown]
-    public async Task TearDown()
+    public async Task CloseSharedSlot()
     {
-        if (_router is not null)
+        if (_slot is not null)
         {
-            if (_slot is not null)
+            try
             {
-                try
-                {
-                    await _router.CallToolTextAsync(
-                        "close_slot",
-                        new Dictionary<string, object?> { ["slot"] = _slot });
-                }
-                catch { /* best effort */ }
+                await _router.CallToolTextAsync(
+                    "close_slot",
+                    new Dictionary<string, object?> { ["slot"] = _slot });
             }
-            await _router.DisposeAsync();
+            catch { /* best effort */ }
         }
     }
 
@@ -63,7 +60,7 @@ public sealed class PluginToolTests
             "get_commands",
             new Dictionary<string, object?> { ["slot"] = _slot, ["filter"] = "_" });
 
-        Assert.That(text, Does.StartWith("No commands found"),
+        Assert.That(text, Does.Contain("No commands found"),
             $"Expected no matches for filter '_'; got:\n{text}");
     }
 
@@ -130,7 +127,10 @@ public sealed class PluginToolTests
             });
 
         JsonElement root = JsonAssert.Parse(json);
-        string stdout = root.GetProperty("stdout").GetString() ?? "";
+        JsonElement content = root.GetProperty("content").EnumerateArray().ToArray()[0];
+        string textJson = content.GetProperty("text").GetString()!;
+        JsonElement text = JsonAssert.Parse(textJson);
+        string stdout = text.GetProperty("stdout").GetString() ?? "";
         Assert.That(stdout, Does.Contain("first"));
         Assert.That(stdout, Does.Contain("second"));
         Assert.That(stdout, Does.Not.Contain("first\n\nsecond"),

@@ -16,26 +16,8 @@ namespace RhMcp.Integration.Tests;
 // process's own pid (so IsProcessAlive returns true). Adopted close-paths bail
 // out before any kill, so reusing our own pid is safe.
 [TestFixture]
-public sealed class AdoptedSlotTests
+internal sealed class AdoptedSlotTests : RouterFixture
 {
-    private RhinoMcpRouter _router = null!;
-
-    [SetUp]
-    public async Task SetUp()
-    {
-        // Per-test router so name-pool / slot state doesn't leak between cases.
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
-    [TearDown]
-    public async Task TearDown()
-    {
-        if (_router is not null)
-        {
-            await _router.DisposeAsync();
-        }
-    }
-
     [Test]
     public async Task announcement_with_listening_port_is_adopted_on_list_slots()
     {

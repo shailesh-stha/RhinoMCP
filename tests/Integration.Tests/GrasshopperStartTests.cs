@@ -10,24 +10,8 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino + Grasshopper; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-public sealed class GrasshopperStartTests
+internal sealed class GrasshopperStartTests : SharedRouterFixture
 {
-    private RhinoMcpRouter _router = null!;
-
-    [OneTimeSetUp]
-    public async Task SetUp()
-    {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
-    [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        if (_router is not null)
-        {
-            await _router.DisposeAsync();
-        }
-    }
 
     [Test]
     public async Task g2_start_in_rhino_8_produces_distinct_slot()

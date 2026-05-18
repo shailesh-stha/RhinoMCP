@@ -15,25 +15,8 @@ namespace RhMcp.Integration.Tests;
 [Explicit("Spawns real Rhino on Windows; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
 [Platform("Win")]
-public sealed class WindowsProcessIsolationTests
+internal sealed class WindowsProcessIsolationTests : RouterFixture
 {
-    private RhinoMcpRouter _router = null!;
-
-    [SetUp]
-    public async Task SetUp()
-    {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
-    [TearDown]
-    public async Task TearDown()
-    {
-        if (_router is not null)
-        {
-            await _router.DisposeAsync();
-        }
-    }
-
     [Test]
     public async Task two_slots_same_version_have_distinct_pids_and_ports()
     {

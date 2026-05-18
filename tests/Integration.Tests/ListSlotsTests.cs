@@ -10,25 +10,8 @@ namespace RhMcp.Integration.Tests;
 // Rhino — slot-population behaviour lives in SpawnSlotTests,
 // GrasshopperStartTests, MultiRouterTests.
 [TestFixture]
-public sealed class ListSlotsTests
+internal sealed class ListSlotsTests : SharedRouterFixture
 {
-    private RhinoMcpRouter _router = null!;
-
-    [OneTimeSetUp]
-    public async Task SetUp()
-    {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
-    [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        if (_router is not null)
-        {
-            await _router.DisposeAsync();
-        }
-    }
-
     [Test]
     public async Task list_slots_is_empty_for_freshly_spawned_router()
     {

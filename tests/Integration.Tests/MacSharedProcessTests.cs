@@ -16,25 +16,8 @@ namespace RhMcp.Integration.Tests;
 [Explicit("Spawns real Rhino on macOS; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
 [Platform("MacOSX")]
-public sealed class MacSharedProcessTests
+internal sealed class MacSharedProcessTests : RouterFixture
 {
-    private RhinoMcpRouter _router = null!;
-
-    [SetUp]
-    public async Task SetUp()
-    {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
-    [TearDown]
-    public async Task TearDown()
-    {
-        if (_router is not null)
-        {
-            await _router.DisposeAsync();
-        }
-    }
-
     [Test]
     public async Task two_slots_same_version_share_pid_and_use_distinct_ports()
     {
@@ -89,11 +72,6 @@ public sealed class MacSharedProcessTests
         _ = await _router.CallToolTextAsync("close_slot", new Dictionary<string, object?> { ["slot"] = slotA });
         _ = await _router.CallToolTextAsync("close_slot", new Dictionary<string, object?> { ["slot"] = slotB });
 
-        // Process exit is async on macOS; give the kill a moment to land.
-        for (int i = 0; i < 50 && IsProcessAlive(sharedPid); i++)
-        {
-            await Task.Delay(100);
-        }
         Assert.That(IsProcessAlive(sharedPid), Is.False, "Closing the last sibling must terminate the shared Rhino.");
 
         string listJson = await _router.CallToolTextAsync("list_slots");

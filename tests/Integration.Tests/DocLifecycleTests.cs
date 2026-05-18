@@ -9,24 +9,8 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-public sealed class DocLifecycleTests
+internal sealed class DocLifecycleTests : SharedRouterFixture
 {
-    private RhinoMcpRouter _router = null!;
-
-    [OneTimeSetUp]
-    public async Task SetUp()
-    {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
-    [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        if (_router is not null)
-        {
-            await _router.DisposeAsync();
-        }
-    }
 
     // TODO : Close without a path doesn't work on mac? Get's stuck waiting for a path
     // close_doc returns a plain string message ("Document closed without saving.",

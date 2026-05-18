@@ -11,24 +11,17 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-public sealed class MultiRouterTests
+internal sealed class MultiRouterTests : SharedRouterFixture
 {
-    private RhinoMcpRouter _router = null!;
     private RhinoMcpRouter? _router2;
     private RhinoMcpRouter? _router3;
 
-    [OneTimeSetUp]
-    public async Task SetUp()
-    {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
+    // The base fixture disposes _router; here we also need to clean up the
+    // extra routers spawned by the cross-router test cases.
     [OneTimeTearDown]
-    public async Task TearDown()
+    public async Task DisposeExtraRouters()
     {
-        // Dispose every router we spun up; the original fixture leaked
-        // _router_2 / _router_3 by never calling DisposeAsync on them.
-        foreach (RhinoMcpRouter? router in new[] { _router, _router2, _router3 })
+        foreach (RhinoMcpRouter? router in new[] { _router2, _router3 })
         {
             if (router is null) continue;
             try { await router.DisposeAsync(); } catch { /* best effort */ }

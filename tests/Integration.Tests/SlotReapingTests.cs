@@ -14,25 +14,8 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-public sealed class SlotReapingTests
+internal sealed class SlotReapingTests : RouterFixture
 {
-    private RhinoMcpRouter _router = null!;
-
-    [SetUp]
-    public async Task SetUp()
-    {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
-    [TearDown]
-    public async Task TearDown()
-    {
-        if (_router is not null)
-        {
-            await _router.DisposeAsync();
-        }
-    }
-
     [Test]
     public async Task externally_killed_rhino_is_pruned_from_list_slots()
     {

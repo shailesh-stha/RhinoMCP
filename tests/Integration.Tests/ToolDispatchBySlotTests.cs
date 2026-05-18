@@ -13,25 +13,8 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns real Rhinos; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-public sealed class ToolDispatchBySlotTests
+internal sealed class ToolDispatchBySlotTests : RouterFixture
 {
-    private RhinoMcpRouter _router = null!;
-
-    [SetUp]
-    public async Task SetUp()
-    {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
-    [TearDown]
-    public async Task TearDown()
-    {
-        if (_router is not null)
-        {
-            await _router.DisposeAsync();
-        }
-    }
-
     [Test]
     public async Task explicit_slot_routes_to_correct_rhino()
     {
@@ -54,22 +37,19 @@ public sealed class ToolDispatchBySlotTests
                     """,
             });
 
-        string listA = await _router.CallToolTextAsync(
-            "list_objects",
+        string listA = await _router.CallToolTextAsync("list_objects",
             new Dictionary<string, object?> { ["slot"] = slotA });
-        string listB = await _router.CallToolTextAsync(
-            "list_objects",
+
+        string listB = await _router.CallToolTextAsync("list_objects",
             new Dictionary<string, object?> { ["slot"] = slotB });
 
-        // list_objects returns a human-readable summary. We only need to
-        // distinguish "has objects" from "empty"; the exact phrasing is the
-        // plugin's business.
-        Assert.That(listA, Does.Not.Contain("0 object").IgnoreCase
-            .And.Not.Contain("no object").IgnoreCase,
-            $"Slot A should contain the 3 lines we added. Got: {listA}");
-        Assert.That(listB, Does.Contain("0 object").IgnoreCase
-            .Or.Contain("no object").IgnoreCase,
-            $"Slot B should be empty. Got: {listB}");
+        Assert.Multiple((Action)(() =>
+        {
+            Assert.That(GetObjectCount(listA), Is.EqualTo(3),
+                $"Slot A should contain the 3 lines we added. Got: {listA}");
+            Assert.That(GetObjectCount(listB), Is.EqualTo(0),
+                $"Slot B should be empty. Got: {listB}");
+        }));
     }
 
     [Test]
@@ -85,5 +65,15 @@ public sealed class ToolDispatchBySlotTests
         Assert.That(response, Does.Contain("slot_not_found"),
             $"Expected slot_not_found error payload; got: {response}");
         Assert.That(response, Does.Contain("made-up-slot-xyz"));
+    }
+
+    // list_objects wraps its payload in an MCP content envelope:
+    //   {"content":[{"type":"text","text":"{\"count\":N,...}"}]}
+    private static int GetObjectCount(string envelope)
+    {
+        JsonElement root = JsonAssert.Parse(envelope);
+        JsonElement content = root.GetProperty("content").EnumerateArray().ToArray()[0];
+        string payload = content.GetProperty("text").GetString()!;
+        return JsonAssert.Parse(payload).GetProperty("count").GetInt32();
     }
 }

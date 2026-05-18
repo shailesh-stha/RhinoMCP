@@ -9,24 +9,8 @@ namespace RhMcp.Integration.Tests;
 // any string the locator doesn't recognise, which the tool maps to a structured
 // `rhino_not_installed` payload before any process is launched.
 [TestFixture]
-public sealed class SpawnErrorTests
+internal sealed class SpawnErrorTests : SharedRouterFixture
 {
-    private RhinoMcpRouter _router = null!;
-
-    [OneTimeSetUp]
-    public async Task SetUp()
-    {
-        _router = await RhinoMcpRouter.LaunchIsolatedAsync();
-    }
-
-    [OneTimeTearDown]
-    public async Task TearDown()
-    {
-        if (_router is not null)
-        {
-            await _router.DisposeAsync();
-        }
-    }
 
     [Test]
     public async Task spawn_with_unknown_version_returns_rhino_not_installed()
