@@ -4,13 +4,8 @@ namespace RhMcp.Integration.Tests;
 
 // Tests that need a live Rhino with the rh-mcp plugin loaded. The fixture
 // spawns Rhino via the router's spawn_slot, so Rhino must be installed and
-// licensed, and the freshly-built plugin must be loadable. Marked [Explicit]
-// so `dotnet test` without filters skips them — opt in with
-//   dotnet test --filter "Category=RequiresRhino"
-// or by running a specific test by name in the IDE.
+// licensed, and the freshly-built plugin must be loadable.
 [TestFixture]
-[Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
-[Category("RequiresRhino")]
 internal sealed class PluginToolTests : SharedRouterFixture
 {
     private string _slot = null!;

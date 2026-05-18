@@ -9,11 +9,9 @@ namespace RhMcp.Integration.Tests;
 //   The first slot launches Rhino.app; subsequent slots ask the existing
 //   listener to spawn another doc + port via _router_spawn_listener.
 //
-// Marked [Explicit] because it requires a real Rhino install. [Platform(MacOSX)]
-// keeps the case from running on Windows where the contract is the opposite.
+// [Platform(MacOSX)] keeps the case from running on Windows where the contract
+// is the opposite.
 [TestFixture]
-[Explicit("Spawns real Rhino on macOS; opt in with --filter \"Category=RequiresRhino\".")]
-[Category("RequiresRhino")]
 [Platform("MacOSX")]
 public sealed class MacSharedProcessTests : RouterFixture
 {

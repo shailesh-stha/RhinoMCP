@@ -5,11 +5,8 @@ namespace RhMcp.Integration.Tests;
 
 // Pins down the JSON shape list_slots returns post-spawn / post-close. The
 // existing ListSlotsTests fixture only asserts the empty case; this one
-// asserts the populated case and the close-removes path. Requires a real
-// Rhino install.
+// asserts the populated case and the close-removes path.
 [TestFixture]
-[Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
-[Category("RequiresRhino")]
 public sealed class ListSlotsShapeTests : RouterFixture
 {
     [Test]

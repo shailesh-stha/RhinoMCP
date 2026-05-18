@@ -3,10 +3,7 @@ using RhMcp.Integration.Tests.Harness;
 namespace RhMcp.Integration.Tests;
 
 // Exercises open_doc / close_doc — the plugin-side document lifecycle tools.
-// Marked [Explicit] because they require a real Rhino install.
 [TestFixture]
-[Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
-[Category("RequiresRhino")]
 public sealed class DocLifecycleTests : SharedRouterFixture
 {
 

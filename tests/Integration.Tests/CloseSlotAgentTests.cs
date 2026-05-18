@@ -4,12 +4,7 @@ namespace RhMcp.Integration.Tests;
 
 // Drives Claude via the local CLI against an isolated rhino-mcp-router. No
 // Rhino install required — close_slot on a bogus slot only touches the router.
-// Marked [Explicit] because real LLM calls cost subscription quota and are
-// non-deterministic; opt in with:
-//   dotnet test --filter "Category=AgentDriven"
 [TestFixture]
-[Explicit("Drives a real Claude session via the CLI; uses your Claude Code subscription quota.")]
-[Category("AgentDriven")]
 [McpDependency("rhino")]
 public sealed class CloseSlotAgentTests : AgenticTestBase
 {

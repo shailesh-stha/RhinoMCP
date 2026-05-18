@@ -3,12 +3,8 @@ using RhMcp.Integration.Tests.Harness;
 namespace RhMcp.Integration.Tests;
 
 // Exercises spawn_slot end-to-end: the router must launch a real Rhino,
-// receive its listener announcement, and return the slot metadata. Marked
-// [Explicit] because it requires a working Rhino install + freshly-built
-// plugin. Opt in with --filter "Category=RequiresRhino".
+// receive its listener announcement, and return the slot metadata.
 [TestFixture]
-[Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
-[Category("RequiresRhino")]
 internal sealed class SpawnSlotTests : SharedRouterFixture
 {
 

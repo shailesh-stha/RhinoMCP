@@ -4,11 +4,8 @@ using RhMcp.Integration.Tests.Harness;
 namespace RhMcp.Integration.Tests;
 
 // Exercises g1_start / g2_start: starting Grasshopper inside a spawned Rhino
-// should produce its own slot entry alongside the parent Rhino slot. Marked
-// [Explicit] because it requires a real Rhino install.
+// should produce its own slot entry alongside the parent Rhino slot.
 [TestFixture]
-[Explicit("Spawns a real Rhino + Grasshopper; opt in with --filter \"Category=RequiresRhino\".")]
-[Category("RequiresRhino")]
 public sealed class GrasshopperStartTests : SharedRouterFixture
 {
 

@@ -7,11 +7,7 @@ namespace RhMcp.Integration.Tests;
 // probes pid + port on every list_slots call and prunes dead rows. These tests
 // pin down the reaping behaviour by killing the Rhino out from under the router
 // and asserting that list_slots no longer reports the slot.
-//
-// Requires a real Rhino install on either platform.
 [TestFixture]
-[Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
-[Category("RequiresRhino")]
 public sealed class SlotReapingTests : RouterFixture
 {
     [Test]

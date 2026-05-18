@@ -6,11 +6,7 @@ namespace RhMcp.Integration.Tests;
 //   - An explicit `slot` arg must route to that exact Rhino.
 //   - An unknown `slot` arg must produce a structured slot_not_found payload
 //     (not a hang, and not a generic MCP error).
-//
-// Requires a real Rhino install.
 [TestFixture]
-[Explicit("Spawns real Rhinos; opt in with --filter \"Category=RequiresRhino\".")]
-[Category("RequiresRhino")]
 public sealed class ToolDispatchBySlotTests : RouterFixture
 {
     [Test]

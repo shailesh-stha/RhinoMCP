@@ -6,13 +6,9 @@ namespace RhMcp.Integration.Tests;
 // Pins down the Windows-specific contract: every slot gets its own OS process,
 // regardless of version. This is the inverse of MacSharedProcessTests and is
 // the simpler invariant to verify — if either test ever fails, the shared-vs-
-// isolated branch in RhinoManager has drifted.
-//
-// Marked [Explicit] because it requires a real Rhino install. [Platform(Win)]
-// excludes the case from macOS where the contract is the opposite.
+// isolated branch in RhinoManager has drifted. [Platform(Win)] excludes the
+// case from macOS where the contract is the opposite.
 [TestFixture]
-[Explicit("Spawns real Rhino on Windows; opt in with --filter \"Category=RequiresRhino\".")]
-[Category("RequiresRhino")]
 [Platform("Win")]
 public sealed class WindowsProcessIsolationTests : RouterFixture
 {

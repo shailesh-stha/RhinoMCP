@@ -56,8 +56,6 @@ public sealed class RhinoMcpRouter : IAsyncDisposable
         CancellationToken ct = default)
     {
         CallToolResult result = await Client.CallToolAsync(toolName, arguments, cancellationToken: ct);
-        // TODO : Stash any slots opened by this client
-        // TODO : Remove any slots closed by this client
         return string.Concat(result.Content.OfType<TextContentBlock>().Select(t => t.Text));
     }
 
@@ -76,14 +74,33 @@ public sealed class RhinoMcpRouter : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        // Close every slot the router is tracking before tearing down the
+        // transport. On macOS the app is single-instance: leaving a Rhino
+        // alive between tests means the next `open -a` just foregrounds it,
+        // the new port never binds, and the spawn waits the full 60s
+        // SpawnTimeoutSeconds before failing. Cooperative close keeps tests
+        // independent and fast.
         try
         {
-            // TODO : Close any slots opened by this client
-            for (int i = 0; i < 5; i++)
+            string listJson = await CallToolTextAsync("list_slots");
+            using JsonDocument doc = JsonDocument.Parse(listJson);
+            if (doc.RootElement.TryGetProperty("payload", out JsonElement payload)
+                && payload.ValueKind == JsonValueKind.Array)
             {
-                _ = await CallToolTextAsync("_router_close_listener", new() { { "port", i } });
+                foreach (JsonElement slot in payload.EnumerateArray())
+                {
+                    if (slot.TryGetProperty("slotId", out JsonElement slotIdEl)
+                        && slotIdEl.GetString() is string slotId)
+                    {
+                        _ = await CallToolTextAsync("close_slot", new() { { "slot", slotId } });
+                    }
+                }
             }
+        }
+        catch { /* best effort */ }
 
+        try
+        {
             await Client.DisposeAsync();
         }
         catch { /* best effort */ }

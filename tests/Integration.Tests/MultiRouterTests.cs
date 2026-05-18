@@ -4,11 +4,8 @@ namespace RhMcp.Integration.Tests;
 
 // Exercises the "many tools / many routers share the same slot" behaviour:
 // repeated tool calls (from one router, or from several isolated routers)
-// should not leave duplicate slot entries behind. Marked [Explicit] because
-// it spawns real Rhinos.
+// should not leave duplicate slot entries behind.
 [TestFixture]
-[Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
-[Category("RequiresRhino")]
 public sealed class MultiRouterTests : SharedRouterFixture
 {
     private RhinoMcpRouter? _router2;
