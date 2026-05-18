@@ -7,7 +7,7 @@ namespace RhMcp.Integration.Tests;
 // Exercises the router's close_slot tool directly. No Rhino install required —
 // these tests run against a freshly-spawned router with an isolated state dir.
 [TestFixture]
-internal sealed class CloseSlotTests : SharedRouterFixture
+public sealed class CloseSlotTests : SharedRouterFixture
 {
     // Regression: a status-agnostic existence check is required so launching
     // slots are not mistaken for missing slots. The structured shape

@@ -10,7 +10,7 @@ namespace RhMcp.Integration.Tests;
 // Rhino — slot-population behaviour lives in SpawnSlotTests,
 // GrasshopperStartTests, MultiRouterTests.
 [TestFixture]
-internal sealed class ListSlotsTests : SharedRouterFixture
+public sealed class ListSlotsTests : SharedRouterFixture
 {
     [Test]
     public async Task list_slots_is_empty_for_freshly_spawned_router()

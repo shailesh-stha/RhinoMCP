@@ -10,7 +10,7 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino + Grasshopper; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-internal sealed class GrasshopperStartTests : SharedRouterFixture
+public sealed class GrasshopperStartTests : SharedRouterFixture
 {
 
     [Test]

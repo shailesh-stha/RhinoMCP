@@ -11,7 +11,7 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-internal sealed class ListSlotsShapeTests : RouterFixture
+public sealed class ListSlotsShapeTests : RouterFixture
 {
     [Test]
     public async Task list_slots_after_spawn_contains_expected_fields()

@@ -13,7 +13,7 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns real Rhinos; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-internal sealed class ToolDispatchBySlotTests : RouterFixture
+public sealed class ToolDispatchBySlotTests : RouterFixture
 {
     [Test]
     public async Task explicit_slot_routes_to_correct_rhino()

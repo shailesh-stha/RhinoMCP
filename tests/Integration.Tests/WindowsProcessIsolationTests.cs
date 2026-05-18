@@ -15,7 +15,7 @@ namespace RhMcp.Integration.Tests;
 [Explicit("Spawns real Rhino on Windows; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
 [Platform("Win")]
-internal sealed class WindowsProcessIsolationTests : RouterFixture
+public sealed class WindowsProcessIsolationTests : RouterFixture
 {
     [Test]
     public async Task two_slots_same_version_have_distinct_pids_and_ports()

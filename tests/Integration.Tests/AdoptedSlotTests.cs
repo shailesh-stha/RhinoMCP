@@ -16,7 +16,7 @@ namespace RhMcp.Integration.Tests;
 // process's own pid (so IsProcessAlive returns true). Adopted close-paths bail
 // out before any kill, so reusing our own pid is safe.
 [TestFixture]
-internal sealed class AdoptedSlotTests : RouterFixture
+public sealed class AdoptedSlotTests : RouterFixture
 {
     [Test]
     public async Task announcement_with_listening_port_is_adopted_on_list_slots()

@@ -9,7 +9,7 @@ namespace RhMcp.Integration.Tests;
 // any string the locator doesn't recognise, which the tool maps to a structured
 // `rhino_not_installed` payload before any process is launched.
 [TestFixture]
-internal sealed class SpawnErrorTests : SharedRouterFixture
+public sealed class SpawnErrorTests : SharedRouterFixture
 {
 
     [Test]

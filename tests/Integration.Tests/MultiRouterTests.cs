@@ -11,7 +11,7 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-internal sealed class MultiRouterTests : SharedRouterFixture
+public sealed class MultiRouterTests : SharedRouterFixture
 {
     private RhinoMcpRouter? _router2;
     private RhinoMcpRouter? _router3;

@@ -9,7 +9,7 @@ namespace RhMcp.Integration.Tests.Harness;
 //     idempotent suites where the spawn cost matters.
 // NUnit runs base [SetUp]/[OneTimeSetUp] before derived ones, so derived classes
 // can add their own setup methods without overriding anything here.
-internal abstract class RouterFixture
+public abstract class RouterFixture
 {
     protected RhinoMcpRouter _router = null!;
 
@@ -29,7 +29,7 @@ internal abstract class RouterFixture
     }
 }
 
-internal abstract class SharedRouterFixture
+public abstract class SharedRouterFixture
 {
     protected RhinoMcpRouter _router = null!;
 

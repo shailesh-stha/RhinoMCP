@@ -16,7 +16,7 @@ namespace RhMcp.Integration.Tests;
 [Explicit("Spawns real Rhino on macOS; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
 [Platform("MacOSX")]
-internal sealed class MacSharedProcessTests : RouterFixture
+public sealed class MacSharedProcessTests : RouterFixture
 {
     [Test]
     public async Task two_slots_same_version_share_pid_and_use_distinct_ports()

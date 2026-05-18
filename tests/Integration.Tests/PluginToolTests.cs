@@ -13,7 +13,7 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-internal sealed class PluginToolTests : SharedRouterFixture
+public sealed class PluginToolTests : SharedRouterFixture
 {
     private string _slot = null!;
 

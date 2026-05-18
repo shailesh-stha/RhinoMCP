@@ -9,7 +9,7 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-internal sealed class DocLifecycleTests : SharedRouterFixture
+public sealed class DocLifecycleTests : SharedRouterFixture
 {
 
     // TODO : Close without a path doesn't work on mac? Get's stuck waiting for a path

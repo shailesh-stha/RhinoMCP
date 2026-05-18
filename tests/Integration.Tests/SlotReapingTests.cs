@@ -14,7 +14,7 @@ namespace RhMcp.Integration.Tests;
 [TestFixture]
 [Explicit("Spawns a real Rhino; opt in with --filter \"Category=RequiresRhino\".")]
 [Category("RequiresRhino")]
-internal sealed class SlotReapingTests : RouterFixture
+public sealed class SlotReapingTests : RouterFixture
 {
     [Test]
     public async Task externally_killed_rhino_is_pruned_from_list_slots()

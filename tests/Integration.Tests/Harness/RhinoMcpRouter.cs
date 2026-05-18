@@ -9,7 +9,7 @@ namespace RhMcp.Integration.Tests.Harness;
 // state.db / listener-announcement dir are isolated from the user's regularly
 // running router. Disposal kills the child process via the transport's
 // shutdown path.
-internal sealed class RhinoMcpRouter : IAsyncDisposable
+public sealed class RhinoMcpRouter : IAsyncDisposable
 {
     private readonly string _isolatedTempDir;
 
