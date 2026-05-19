@@ -6,9 +6,9 @@ using RhinoCommand = Rhino.Commands.Command;
 
 namespace RhMcp;
 
-public class ConnectCommand : RhinoCommand
+public class MCPConnectCommand : RhinoCommand
 {
-    public override string EnglishName => "RhinoMCPConnect";
+    public override string EnglishName => "MCPConnect";
 
     protected override Rhino.Commands.Result RunCommand(RhinoDoc doc, Rhino.Commands.RunMode mode)
     {
@@ -23,7 +23,7 @@ internal sealed class ConnectDialog : Dialog
 
     public ConnectDialog()
     {
-        Title = "Connect RhinoMCP to your AI Agent";
+        Title = "Connect Rhino to your AI Agent";
         
         Resizable = false;
         Padding = new Padding(12);
@@ -47,7 +47,7 @@ internal sealed class ConnectDialog : Dialog
 
         Label blurb = new ()
         {
-            Text = "Paste this prompt into your MCP-aware AI agent (e.g. Claude Code), it will handle the connection for you.",
+            Text = "Paste this prompt into your MCP-aware AI agent (e.g. Claude), it will handle the connection for you.",
             Wrap = WrapMode.Word,
         };
 
