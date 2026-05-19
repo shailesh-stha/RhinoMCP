@@ -4,7 +4,7 @@
   "display_name": "Rhino MCP Platform",
   "version": "0.1.0",
   "description": "Desktop Connector for Rhino3d and Grasshopper",
-  "long_description": "Bridges Claude to Rhino 3D and Grasshopper, letting Claude drive an installed copy of Rhino to model geometry, inspect documents, capture viewport images, and author/edit Grasshopper 1 and Grasshopper 2 definitions. Claude can run Rhino commands, execute Python or C# scripts inside the Rhino process, place and wire Grasshopper components, solve canvases, and manage layers, selections, and cameras. The connector runs a small local router (`router-launcher.mjs`) over stdio; the router spawns or attaches to local Rhino instances and forwards MCP tool calls to the Rhino-MCP-Platform plugin running inside them. Requires Rhino 8 or Rhino 9 WIP installed on macOS or Windows, with the Rhino-MCP-Platform plugin installed via Rhino's PackageManager. No data leaves the user's machine.",
+  "long_description": "An MCP bridge between Rhino3D, Grasshopper and Claude. You can use it as a modelling, scripting or plugin development assistant.\n\nRequires the Rhino-MCP-Platform plugin, installable from Rhino's PackageManager.",
   "author": {
     "name": "McNeel",
     "email": "callum@mcneel.com",
