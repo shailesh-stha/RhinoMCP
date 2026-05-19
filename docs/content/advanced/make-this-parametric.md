@@ -4,8 +4,8 @@ linkTitle: Make this parametric
 weight: 3
 ---
 
-You've modelled something by hand &mdash; a stair, a panelised facade, a
-piece of furniture &mdash; and now you wish you'd built it in
+You've modelled something by hand (a stair, a panelised facade, a
+piece of furniture) and now you wish you'd built it in
 Grasshopper from the start, because the client just asked for "the same
 thing but 200mm taller and with seven of them instead of five."
 
@@ -19,7 +19,7 @@ it as a GH2 graph that drives the same result from sliders.
   Claude Desktop, or similar).
 - **Rhino 9** with Rhino MCP running, your hand-built model open, and a
   GH2 canvas available.
-- A rough mental model of what the parameters should be &mdash; the
+- A rough mental model of what the parameters should be. The
   assistant can guess, but you'll get a better graph if you say so.
 
 ## A prompt to start with
@@ -29,7 +29,7 @@ I've modelled this stair by hand. Look at the geometry on layer
 `Stair`, work out the construction recipe, and rebuild it as a GH2
 definition driven by sliders for tread depth, riser height, total
 rise, and number of treads. Reference my existing geometry in the
-Rhino doc only as a target to match &mdash; the GH definition should
+Rhino doc only as a target to match; the GH definition should
 generate it from scratch. Solve and compare.
 {{< /prompt >}}
 
@@ -39,7 +39,7 @@ The assistant calls `list_objects` and reads attributes off your
 geometry (layer, dimensions, counts, bounding boxes) to reverse-engineer
 the rules. Then it builds the GH2 graph with `g2_place_component`,
 `g2_connect`, and `g2_place_slider`, solves it, and compares the output
-to your reference geometry &mdash; usually by checking key dimensions
+to your reference geometry, usually by checking key dimensions
 and counts rather than a literal Brep diff.
 
 Expect a back-and-forth: the assistant will often ask "is the spacing
@@ -47,7 +47,7 @@ uniform, or does it follow a curve?" before committing to a topology.
 
 ## What to review
 
-- **The parameter set.** You wanted four sliders &mdash; did you get
+- **The parameter set.** You wanted four sliders: did you get
   four? The assistant sometimes adds extras for things you'd rather
   hard-code, or hard-codes something you wanted to expose. A quick
   prompt fixes it.
@@ -75,5 +75,5 @@ uniform, or does it follow a curve?" before committing to a topology.
 
 ## Related
 
-- [Upgrade a GH1 script to GH2](../upgrade-gh1-to-gh2) &mdash; for when
+- [Upgrade a GH1 script to GH2](../upgrade-gh1-to-gh2): for when
   you already have a parametric definition, just in the old canvas.

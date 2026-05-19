@@ -5,7 +5,7 @@ next: docs/getting-started
 weight: 1
 ---
 
-Welcome. These docs are aimed at people **using** Rhino MCP &mdash; whether
+Welcome. These docs are aimed at people **using** Rhino MCP, whether
 you're a long-time Rhino user trying AI for the first time, or you already
 use Claude/Cursor and want to point them at Rhino.
 
@@ -16,7 +16,7 @@ If you're here to **hack on the plugin or router itself**, head over to the
 
 {{< cards >}}
   {{< card link="getting-started" title="Getting Started" subtitle="Install the plugin, hook up your AI assistant, and try a few prompts that get progressively more fun." >}}
-  {{< card link="recipes" title="Recipes" subtitle="Copy-pasteable prompts grouped by what you want to do &mdash; modelling, drawings, Grasshopper, cleanup." >}}
+  {{< card link="recipes" title="Recipes" subtitle="Copy-pasteable prompts grouped by what you want to do: modelling, drawings, Grasshopper, cleanup." >}}
 {{< /cards >}}
 
 ## Set up your assistant

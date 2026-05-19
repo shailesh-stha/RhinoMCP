@@ -22,7 +22,7 @@ With Rhino MCP loaded, the assistant can:
 - Read your `.csproj` and source files.
 - Edit project and code files and re-build.
 - Load the freshly built `.rhp` into Rhino, run its commands, and read back
-  what happened &mdash; so it can tell whether a change actually worked, not
+  what happened, so it can tell whether a change actually worked, not
   just whether it compiled.
 
 That last point is what makes this worth doing through Rhino MCP rather than
@@ -51,7 +51,7 @@ Things worth looking at before you accept the work:
   match how you want the two TFMs to differ.
 - **Any swapped APIs.** When a `net48`-era RhinoCommon call doesn't exist
   on the newer target, the assistant will pick a replacement. Spot-check
-  the substitutions &mdash; same behaviour, not just same signature.
+  the substitutions: same behaviour, not just same signature.
 - **Plugin manifest / yak files.** If you ship through yak, the manifest
   and target folders may need updating too.
 

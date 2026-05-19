@@ -6,14 +6,14 @@ weight: 4
 
 If you've ever wanted to try a plugin idea but couldn't be bothered to
 scaffold the project, write the manifest, wire up a command, build,
-load, debug, repeat &mdash; this is what Rhino MCP plus an AI assistant
+load, debug, repeat: this is what Rhino MCP plus an AI assistant
 removes. Describe what you want the plugin to do, and the assistant can
 scaffold it, build it, load it into a running Rhino, exercise its
 commands, and iterate on what it sees.
 
 This is closer to "rapid prototyping a plugin idea" than "ship a
 production plugin." The output is a starting point you can keep
-developing &mdash; or throw away once you've decided whether the idea
+developing, or throw away once you've decided whether the idea
 was worth pursuing.
 
 ## What you need
@@ -39,7 +39,7 @@ template, target `net7.0`, and once it builds load it into Rhino and
 run the command on whatever's open so I can see it work.
 {{< /prompt >}}
 
-Adjust scope to taste &mdash; one command, three commands, a Grasshopper
+Adjust scope to taste: one command, three commands, a Grasshopper
 component, a display conduit. The pattern is the same.
 
 ## What you should see
@@ -49,7 +49,7 @@ generated command file to match your spec, builds the `.rhp`, loads it
 into the running Rhino via `run_command` (`_PluginManager` /
 `_-LoadPlugIn`), and then invokes the new command. It reads the command
 line output back through the MCP, so it can tell whether the command
-actually did what you asked &mdash; not just whether it compiled.
+actually did what you asked, not just whether it compiled.
 
 If the first build fails or the command misbehaves, expect an iterate
 loop: edit, build, reload, re-run, observe. The whole point of doing
@@ -67,7 +67,7 @@ Even for a throwaway prototype, glance at:
   anything you want to keep, decide whether to ship via Yak or copy to
   the plugins folder.
 - **API choices.** Brand-new RhinoCommon code from an assistant is
-  often *almost right* &mdash; the right namespace, a plausible method
+  often *almost right*: the right namespace, a plausible method
   name, slightly wrong arguments. Read the diff with the
   [RhinoCommon docs](https://developer.rhino3d.com/api/rhinocommon/)
   open in the other window.
@@ -78,7 +78,7 @@ Even for a throwaway prototype, glance at:
 
 - **Template missing.** If `dotnet new rhinoplugin` isn't available,
   the assistant should install `Rhino.Templates` rather than
-  hand-rolling a `.csproj` &mdash; the templates set up a lot of
+  hand-rolling a `.csproj`. The templates set up a lot of
   boring things correctly.
 - **Plugin won't load.** Usually a target-framework mismatch (plugin
   built for `net8.0`, Rhino running `net7.0`) or a missing reference.
@@ -92,7 +92,7 @@ Even for a throwaway prototype, glance at:
 
 ## Related
 
-- [Upgrade a plugin to .NET Core](../upgrade-to-netcore) &mdash; once
+- [Upgrade a plugin to .NET Core](../upgrade-to-netcore): once
   the prototype proves the idea, you'll want it on a modern target.
-- [Upgrade to a newer Rhino](../upgrade-rhino-version) &mdash; same
+- [Upgrade to a newer Rhino](../upgrade-rhino-version): same
   idea, different axis.

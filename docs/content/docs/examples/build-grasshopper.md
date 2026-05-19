@@ -3,7 +3,7 @@ title: Build Grasshopper definitions
 weight: 40
 ---
 
-Get the assistant to wire up a Grasshopper definition for you &mdash;
+Get the assistant to wire up a Grasshopper definition for you:
 place components, connect them, set sliders, and solve. You can pick up
 where it left off.
 

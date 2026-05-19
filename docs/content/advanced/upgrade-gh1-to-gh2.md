@@ -6,7 +6,7 @@ weight: 1
 
 Rhino 9 ships Grasshopper 2 alongside Grasshopper 1. If you have a GH1
 definition you'd like to move forward, the MCP exposes parallel `g1_*`
-and `g2_*` tool families &mdash; an assistant can read your GH1 graph,
+and `g2_*` tool families, so an assistant can read your GH1 graph,
 rebuild it on a GH2 canvas, and solve both side-by-side to confirm they
 match.
 
@@ -42,8 +42,8 @@ they still agree.
 
 - **Data trees.** GH2's branch and path handling isn't identical to
   GH1's. If your definition does anything non-trivial with grafting,
-  flattening, or path mapping, look closely at the rebuilt version
-  &mdash; this is the most common source of "solves but wrong" bugs.
+  flattening, or path mapping, look closely at the rebuilt version.
+  This is the most common source of "solves but wrong" bugs.
 - **Component substitutions.** GH2 component names and parameter types
   don't always line up one-to-one. Have the assistant flag any case
   where it picked the closest match rather than an exact equivalent.

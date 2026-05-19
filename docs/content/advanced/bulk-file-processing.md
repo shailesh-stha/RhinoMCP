@@ -4,8 +4,8 @@ linkTitle: Bulk file processing
 weight: 5
 ---
 
-You've got a folder of `.3dm` files and a job to do on each of them
-&mdash; purge unused layers, re-export every file as STEP, replace a
+You've got a folder of `.3dm` files and a job to do on each of them:
+purge unused layers, re-export every file as STEP, replace a
 block definition across the set, fix unit settings, strip annotations,
 add a title block, re-save under a new naming scheme. The hand version
 is a click-fest. The traditional scripted version is a fragile pile of
@@ -41,14 +41,14 @@ I can look at it.
 
 Variations worth trying:
 
-- **Format conversion** &mdash; "re-save every file as Rhino 7 format
+- **Format conversion**: "re-save every file as Rhino 7 format
   into `legacy/`, preserving the folder structure."
-- **Mass edit** &mdash; "in every file, find the block named `TitleBlock`
+- **Mass edit**: "in every file, find the block named `TitleBlock`
   and replace its definition with the one from `template.3dm`."
-- **Audit and report** &mdash; "open each file, collect layer counts,
+- **Audit and report**: "open each file, collect layer counts,
   object counts, units, and tolerance, write the results to
   `audit.csv`. Don't modify anything."
-- **Rename and reorganise** &mdash; "for each file, read the project code
+- **Rename and reorganise**: "for each file, read the project code
   from layer `Meta`, and re-save it as `<code>/<original-name>.3dm`."
 
 ## What you should see
@@ -61,7 +61,7 @@ window doesn't flicker; the slot documents are headless siblings.
 
 For anything non-trivial, expect the assistant to run the first file
 end-to-end and show you the result before fanning out. If it doesn't
-offer, ask for it &mdash; verifying one good output is much cheaper
+offer, ask for it. Verifying one good output is much cheaper
 than auditing fifty bad ones.
 
 ## What to review
@@ -98,17 +98,17 @@ Common failure modes:
   open. Ask for a `list_slots` and have the assistant close anything
   stray before you start the next run.
 - **Memory pressure.** Big files plus many parallel slots will exhaust
-  RAM faster than you expect. Cap the parallelism explicitly &mdash;
-  "at most four slots at a time" &mdash; rather than letting it fan
+  RAM faster than you expect. Cap the parallelism explicitly
+  ("at most four slots at a time") rather than letting it fan
   out across the whole folder.
 - **`RunScript` reflex.** If the assistant reaches for `RunScript`
   with a long dash-prefixed command string, push back: it's the
-  fragile path. The Rhino API has direct equivalents for most things
-  &mdash; ask for those instead. On Mac in particular, `_-Close` and
+  fragile path. The Rhino API has direct equivalents for most things,
+  so ask for those instead. On Mac in particular, `_-Close` and
   `_-New` have quirks worth avoiding.
 
 ## Related
 
-- [Headless render farm](../headless-render-farm) &mdash; same
+- [Headless render farm](../headless-render-farm): same
   slot-per-file shape, but the per-file job is "render", not "modify
   and save".

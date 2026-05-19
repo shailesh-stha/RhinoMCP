@@ -6,7 +6,7 @@ weight: 4
 
 If your Rhino plugin currently only runs on Windows, getting it onto Mac
 is usually a mix of UI work (WPF → Eto) and a long tail of small
-non-UI Windows-isms &mdash; P/Invokes into `user32`/`kernel32`, registry
+non-UI Windows-isms: P/Invokes into `user32`/`kernel32`, registry
 reads, COM interop, `\\`-style paths, `System.Drawing` assumptions, and
 the like. This page is about the non-UI half; for the UI half see
 [Convert a WPF UI to Eto](wpf-to-eto).
@@ -16,7 +16,7 @@ the like. This page is about the non-UI half; for the UI half see
 - **Claude Code** with the [Rhino MCP plugin](../docs/cc-plugin) installed.
 - **Rhino** open with Rhino MCP running, ideally on Mac so the assistant
   can actually exercise the cross-platform path. If you only have Windows
-  handy, you can still do the port &mdash; you just won't catch
+  handy, you can still do the port; you just won't catch
   Mac-specific failures until someone runs it there.
 - Your plugin's source checked out locally, with Claude Code started in
   that repo.
@@ -28,7 +28,7 @@ With Rhino MCP loaded, the assistant can:
 - Grep the codebase for the usual Windows-only suspects (`DllImport`,
   `Microsoft.Win32`, `System.Windows.*`, `Marshal`, hard-coded `C:\`
   paths) and work through them one at a time.
-- Replace each with a portable equivalent &mdash; usually a RhinoCommon
+- Replace each with a portable equivalent, usually a RhinoCommon
   or Eto API, sometimes plain BCL, occasionally a small `RuntimeInformation`
   switch when there's genuinely no shared path.
 - Build, load the `.rhp` into the running Rhino, and run the affected
@@ -43,9 +43,9 @@ up at runtime when the P/Invoke can't resolve.
 
 {{< prompt >}}
 This is a Rhino plugin that only runs on Windows. I want it working on
-Mac as well. Find the Windows-specific code &mdash; P/Invokes, registry
+Mac as well. Find the Windows-specific code (P/Invokes, registry
 access, COM interop, `System.Windows.*` references, hard-coded Windows
-paths &mdash; and replace each with a cross-platform equivalent
+paths) and replace each with a cross-platform equivalent
 (RhinoCommon, Eto, or plain .NET). Work one site at a time, build after
 each change, load it into the Rhino I have open and run the affected
 command to confirm it still works. Show me the diff before each file
@@ -53,7 +53,7 @@ change, and at the end give me a list of anything you couldn't port.
 {{< /prompt >}}
 
 If the plugin has a WPF UI, do that port first (or in parallel in a
-separate session) &mdash; otherwise the build won't come up on Mac at all
+separate session), otherwise the build won't come up on Mac at all
 and the assistant can't close its loop.
 
 ## What to review
@@ -67,7 +67,7 @@ and the assistant can't close its loop.
   Settings should generally move to `PlugIn.Settings` (RhinoCommon) or a
   file under a portable location like `Rhino.ApplicationSettings`'s
   data folder. Watch for license/activation state that was stored in
-  the registry &mdash; that needs a deliberate decision, not just a
+  the registry. That needs a deliberate decision, not just a
   reflexive port.
 - **File paths.** `Path.Combine` and forward slashes are fine on both
   platforms; hard-coded `C:\Users\...` or `%APPDATA%` is not. Mac uses
@@ -77,7 +77,7 @@ and the assistant can't close its loop.
   some bits (printing, GDI+ specifics) don't. If the plugin does
   non-trivial image work, prefer Eto's drawing APIs.
 - **COM interop.** Office automation, Shell COM objects, anything
-  `Marshal.GetActiveObject` &mdash; none of this exists on Mac. These
+  `Marshal.GetActiveObject`: none of this exists on Mac. These
   usually need a real redesign, not a port. Flag them and decide
   per-feature whether to drop, gate, or replace.
 - **Conditional compilation.** Some Windows-only features genuinely have
@@ -98,7 +98,7 @@ clearly Windows-only with a polite message is much better than one that
 appears to work and quietly does nothing.
 
 For anything that compiles on Mac but fails at runtime, ask the
-assistant to reproduce the failure through the MCP first &mdash;
-running the command, reading the error &mdash; before proposing a fix.
+assistant to reproduce the failure through the MCP first (running
+the command, reading the error) before proposing a fix.
 The MCP is what keeps it honest about which "fixes" actually fix
 anything.

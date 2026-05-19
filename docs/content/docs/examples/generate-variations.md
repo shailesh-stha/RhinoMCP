@@ -3,8 +3,8 @@ title: Generate variations
 weight: 20
 ---
 
-Sweep across parameters &mdash; size, position, colour, count &mdash;
-without building each variant by hand.
+Sweep across parameters (size, position, colour, count) without
+building each variant by hand.
 
 ## Try this prompt
 

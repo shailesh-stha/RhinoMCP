@@ -4,9 +4,9 @@ linkTitle: Headless render farm
 weight: 2
 ---
 
-If you have a model you need to capture from many angles &mdash; a study
+If you have a model you need to capture from many angles (a study
 model with twenty options, a presentation board, a turntable, a daylight
-sweep &mdash; the MCP can spin up headless Rhino documents in parallel,
+sweep), the MCP can spin up headless Rhino documents in parallel,
 point cameras at them, dump viewport images, and tear them down again
 without you ever clicking "New Document".
 
@@ -36,11 +36,11 @@ document.
 
 Variations worth trying:
 
-- **Turntable** &mdash; "spin the camera around the model in 15&deg;
+- **Turntable**: "spin the camera around the model in 15&deg;
   steps, save each frame numbered."
-- **Sun study** &mdash; "step the sun from 08:00 to 18:00 in 30-minute
+- **Sun study**: "step the sun from 08:00 to 18:00 in 30-minute
   intervals, capture from the same camera each time."
-- **Option matrix** &mdash; "for every combination of these three
+- **Option matrix**: "for every combination of these three
   GH sliders, solve, capture, label the filename with the slider
   values."
 
@@ -49,7 +49,7 @@ Variations worth trying:
 The assistant calls `spawn_slot` for each file or variation, `open_doc`
 into that slot, `set_camera` (or `run_command` for named views),
 `get_viewport_image` to capture, then `close_slot` when it's done. Your
-main Rhino window stays on whatever you had open &mdash; the slot
+main Rhino window stays on whatever you had open; the slot
 documents are headless siblings, not takeovers.
 
 If it's working from a Grasshopper definition, expect to see `g2_*`
@@ -67,7 +67,7 @@ updates before the shutter clicks.
   output, say so explicitly and check the first frame matches what you
   expected.
 - **Output paths.** Make the assistant echo the full output folder
-  before it starts &mdash; cheaper than discovering forty PNGs landed in
+  before it starts. Cheaper than discovering forty PNGs landed in
   the wrong place.
 
 ## When the assistant gets stuck
@@ -81,5 +81,5 @@ Common failure modes:
   think. The
   [doc-handle note](../docs/recipes) covers this.
 - **Memory pressure.** Spinning up many slots at once can chew RAM.
-  Cap the parallelism &mdash; "do at most four at a time" &mdash; rather
+  Cap the parallelism ("do at most four at a time") rather
   than letting it fan out.

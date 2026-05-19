@@ -11,7 +11,7 @@ assistant. It speaks MCP, so once you point it at the Rhino server it can
 drive Rhino the same way Claude can.
 
 If you're choosing between assistants and aren't sure, start with [Claude
-Desktop](../connector) &mdash; it's the gentler entry point.
+Desktop](../connector); it's the gentler entry point.
 
 ## Before you start
 

@@ -19,7 +19,7 @@ If everything's wired up:
 
 - Rhino will launch (if it wasn't already running).
 - A torus will appear.
-- Your assistant will reply describing what it did &mdash; Claude Desktop
+- Your assistant will reply describing what it did. Claude Desktop
   will include the screenshot inline.
 
 If anything goes sideways, [Troubleshooting](../troubleshooting) is your

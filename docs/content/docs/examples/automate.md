@@ -3,7 +3,7 @@ title: Automate the boring bits
 weight: 60
 ---
 
-One-shot chores. Cleanup, renaming, layer housekeeping &mdash; the kind
+One-shot chores. Cleanup, renaming, layer housekeeping: the kind
 of thing you'd write a script for if you did it often enough.
 
 ## Try this prompt

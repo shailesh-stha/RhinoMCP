@@ -4,12 +4,12 @@ weight: 10
 ---
 
 A growing library of prompts you can copy straight into your AI assistant.
-Treat them as starting points &mdash; tweak the numbers, swap the
+Treat them as starting points: tweak the numbers, swap the
 materials, ask follow-up questions. The assistant is conversational; you
 don't have to get the prompt right on the first try.
 
-> **Where to paste these:** any MCP-connected assistant works &mdash;
-> Claude Desktop, Claude Code, Cursor. If you haven't set one up yet,
+> **Where to paste these:** any MCP-connected assistant works
+> (Claude Desktop, Claude Code, Cursor). If you haven't set one up yet,
 > start with [Getting Started](../getting-started).
 
 ## Modelling
@@ -119,7 +119,7 @@ This canvas is a mess. Tidy it up: align components into a left-to-right
 flow, group related logic with coloured groups and short scribbled
 labels, straighten out crossed wires (insert relays where needed), and
 hide any wires that are purely structural. Don't change what the
-definition does &mdash; just make it readable.
+definition does, just make it readable.
 {{< /prompt >}}
 
 ## Cleanup &amp; chores
@@ -152,8 +152,8 @@ can review and delete them.
 ### Walk me through a workflow
 
 {{< prompt >}}
-I want to model a turbine blade. Walk me through the steps in Rhino
-&mdash; what curves to draw first, how to sweep them, and what to
+I want to model a turbine blade. Walk me through the steps in Rhino:
+what curves to draw first, how to sweep them, and what to
 watch out for. Don't make geometry yet; just explain.
 {{< /prompt >}}
 

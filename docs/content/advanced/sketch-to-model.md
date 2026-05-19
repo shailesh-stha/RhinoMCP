@@ -4,8 +4,8 @@ linkTitle: Sketch to model
 weight: 4
 ---
 
-If you've got a hand sketch &mdash; a napkin drawing, a whiteboard
-photo, a marked-up plan &mdash; you can drop the image into the chat
+If you've got a hand sketch (a napkin drawing, a whiteboard
+photo, a marked-up plan) you can drop the image into the chat
 and ask the assistant to propose a parametric build. It reads the
 sketch, suggests an interpretation, and constructs a first-pass model
 or Grasshopper definition you can iterate on.
@@ -29,7 +29,7 @@ it.
 Here's a sketch of a shelving unit I want to build. Read the
 proportions and structure off the drawing, tell me what you think the
 key parameters are, and propose a parametric model. Don't build
-anything yet &mdash; show me your interpretation first so I can
+anything yet. Show me your interpretation first so I can
 correct it.
 {{< /prompt >}}
 
@@ -60,7 +60,7 @@ you would have spent on a slower start.
   *that specific chair* or as *a chair-shaped recipe*. Be explicit
   about which one you want.
 - **Hidden assumptions.** Material thicknesses, joinery, tolerances,
-  fixings &mdash; none of these are in the sketch. The assistant will
+  fixings: none of these are in the sketch. The assistant will
   invent reasonable defaults; check them before you cut anything.
 
 ## When the assistant gets stuck
@@ -77,6 +77,6 @@ you would have spent on a slower start.
 
 ## Related
 
-- [Make this parametric](../make-this-parametric) &mdash; once the
+- [Make this parametric](../make-this-parametric): once the
   first-pass model exists, this workflow takes it the rest of the
   way.

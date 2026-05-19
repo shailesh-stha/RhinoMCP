@@ -5,8 +5,8 @@ weight: 5
 ---
 
 If your Rhino plugin's UI is built on WPF, it only runs on Windows. Porting
-it to [Eto.Forms](https://github.com/picoe/Eto) &mdash; the cross-platform
-UI toolkit Rhino itself uses &mdash; lets the same plugin run on Rhino for
+it to [Eto.Forms](https://github.com/picoe/Eto), the cross-platform
+UI toolkit Rhino itself uses, lets the same plugin run on Rhino for
 Mac as well. The mechanical parts of that port (rewriting XAML as Eto
 layouts, swapping bindings, re-wiring event handlers) are a great fit for
 Claude Code with Rhino MCP, because the assistant can build the plugin,
@@ -17,7 +17,7 @@ renders.
 
 - **Claude Code** with the [Rhino MCP plugin](../docs/cc-plugin) installed.
 - **Rhino** open with Rhino MCP running. If you can run it on both Windows
-  and Mac, even better &mdash; the whole point of the port is the Mac side.
+  and Mac, even better. The whole point of the port is the Mac side.
 - Your plugin's source checked out locally, with Claude Code started in
   that repo.
 
@@ -34,7 +34,7 @@ With Rhino MCP loaded, the assistant can:
 - Iterate on layout and bindings one panel at a time.
 
 Opening the dialog after each change is what makes this worth doing
-through the MCP &mdash; Eto's layout model isn't WPF's, and "it builds"
+through the MCP. Eto's layout model isn't WPF's, and "it builds"
 tells you very little about whether the result is usable.
 
 ## A prompt to start with
@@ -48,7 +48,7 @@ renders before moving on. Show me the diff before each file change.
 {{< /prompt >}}
 
 If you have a mix of dialogs and dockable panels, tell the assistant
-which is which &mdash; Eto's `Dialog` and Rhino's panel hosting are
+which is which. Eto's `Dialog` and Rhino's panel hosting are
 different code paths.
 
 ## What to review
@@ -59,7 +59,7 @@ different code paths.
   alignment, and what happens when you resize.
 - **Data binding.** WPF's `{Binding}` and `INotifyPropertyChanged` flow
   doesn't exist in Eto the same way. The assistant will often replace
-  bindings with explicit event wiring &mdash; confirm two-way fields
+  bindings with explicit event wiring. Confirm two-way fields
   still round-trip.
 - **Styles and resources.** WPF `Style`, `ResourceDictionary`, and
   control templates have no direct Eto equivalent. Expect these to
@@ -81,6 +81,6 @@ assistant stop and surface the list rather than faking it with a
 useful than a dialog that opens but does nothing.
 
 For visual diffs, ask the assistant to open the same dialog before and
-after on the same Rhino session so you can eyeball the difference
-&mdash; the MCP can drive that, but it can't tell you whether the new
+after on the same Rhino session so you can eyeball the difference.
+The MCP can drive that, but it can't tell you whether the new
 layout *looks* right.
