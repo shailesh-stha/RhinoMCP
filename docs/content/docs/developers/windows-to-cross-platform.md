@@ -21,16 +21,6 @@ reads, COM interop, `\\`-style paths, `System.Drawing` assumptions, and
 the like. This page is about the non-UI half; for the UI half see
 [Convert a WPF UI to Eto](wpf-to-eto).
 
-## What you need
-
-- **Claude Code** with the [Rhino MCP plugin](../getting-started/cc-plugin) installed.
-- **Rhino** open with Rhino MCP running, ideally on Mac so the assistant
-  can actually exercise the cross-platform path. If you only have Windows
-  handy, you can still do the port; you just won't catch
-  Mac-specific failures until someone runs it there.
-- Your plugin's source checked out locally, with Claude Code started in
-  that repo.
-
 ## The loop
 
 With Rhino MCP loaded, the assistant can:

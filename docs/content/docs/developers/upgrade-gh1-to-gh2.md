@@ -17,12 +17,6 @@ new GH2 counterpart on their respective canvases in the same session and compare
 
 We'll use [Voxelizer](https://github.com/ytakzk/Voxelizer) as the running example: a small, single-component GH1 plugin that's easy to follow end to end.
 
-## What you need
-
-- **An AI agent** with the [Rhino MCP plugin](/docs/getting-started) installed.
-- **Rhino 9** open with Rhino MCP running, and Grasshopper 2 available.
-- The Voxelizer source checked out locally, with your agent started in that repo.
-
 ## The loop
 
 With both canvases reachable, the assistant can:

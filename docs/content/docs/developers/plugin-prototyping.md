@@ -23,18 +23,6 @@ production plugin." The output is a starting point you can keep
 developing, or throw away once you've decided whether the idea
 was worth pursuing.
 
-## What you need
-
-- **Claude Code** with the [Rhino MCP plugin](../getting-started/cc-plugin)
-  installed.
-- **Rhino** open with Rhino MCP running, on the Rhino version you want
-  to target.
-- An empty folder where the assistant can scaffold the plugin, with
-  Claude Code started there.
-- The Rhino plugin templates installed (`dotnet new install
-  Rhino.Templates`), or willingness to let the assistant install
-  them.
-
 ## A prompt to start with
 
 {{< prompt >}}
