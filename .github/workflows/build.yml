@@ -16,27 +16,12 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  build:
+  test:
+    # Both projects are Rhino-target-agnostic, so no R8/R9 dimension.
     strategy:
       fail-fast: false
       matrix:
         os: [windows-latest, macos-latest]
-        rhino_target: [R8, R9]
-        include:
-          # router_rids uses %3B to escape ; — MSBuild's -p: switch otherwise
-          # splits the value on ; and treats the second half as a new property.
-          # The plugin csproj uses [MSBuild]::Unescape so the escaped form
-          # decodes back into a real list when populating the item group.
-          - os: windows-latest
-            router_rids: win-x64%3Bwin-arm64
-            yak_platform: win
-            yak_url: https://files.mcneel.com/yak/tools/0.13.0/yak.exe
-            yak_bin: yak.exe
-          - os: macos-latest
-            router_rids: osx-arm64
-            yak_platform: mac
-            yak_url: https://files.mcneel.com/yak/tools/0.13.0/mac/yak
-            yak_bin: yak
 
     runs-on: ${{ matrix.os }}
 
@@ -48,49 +33,59 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Restore router (framework-dependent, for tests)
-        # Router is target-agnostic; only restore/test it once per OS+config.
-        if: matrix.rhino_target == 'R9'
+      - name: Restore router
         run: dotnet restore rhino/router/Router.csproj
 
-      - name: Restore plugin
-        run: dotnet restore rhino/plugin/RhMcp.csproj '-p:RhinoTarget=${{ matrix.rhino_target }}'
-
-      - name: Build router (framework-dependent, for tests)
-        if: matrix.rhino_target == 'R9'
+      - name: Build router
         run: dotnet build rhino/router/Router.csproj --configuration Release --no-restore
 
       # NOTE: tests/Integration.Tests is intentionally excluded
       - name: Test router
-        if: matrix.rhino_target == 'R9'
         run: dotnet test tests/Router.Tests/Router.Tests.csproj --configuration Release --verbosity normal
 
       - name: Test server
-        # Server tests pull pure plugin sources in directly (no RhinoCommon /
-        # AspNetCore dep), so they're target-agnostic — run them once per OS.
-        if: matrix.rhino_target == 'R9'
         run: dotnet test tests/Server.Tests/Server.Tests.csproj --configuration Release --verbosity normal
 
-      - name: Build plugin (publishes router self-contained for RIDs ${{ matrix.router_rids }} into yak output)
+  package:
+    # macOS-only: Windows hosts can't AOT-compile the macOS router, but macOS
+    # can cross-compile Windows. One cross-platform .yak per Rhino target.
+    strategy:
+      fail-fast: false
+      matrix:
+        rhino_target: [R8, R9]
+
+    runs-on: macos-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build plugin (publishes all-platform routers into yak staging)
+        # RouterRids defaults to all three RIDs on macOS — see RhMcp.csproj.
         shell: bash
-        run: dotnet build rhino/plugin/RhMcp.csproj --configuration Release '-p:RouterRids=${{ matrix.router_rids }}' '-p:RhinoTarget=${{ matrix.rhino_target }}'
+        run: dotnet build rhino/plugin/RhMcp.csproj --configuration Release '-p:RhinoTarget=${{ matrix.rhino_target }}'
 
       - name: Download yak CLI
         shell: bash
         run: |
-          curl -fsSL -o "${{ matrix.yak_bin }}" "${{ matrix.yak_url }}"
-          chmod +x "${{ matrix.yak_bin }}"
+          curl -fsSL -o yak https://files.mcneel.com/yak/tools/0.13.0/mac/yak
+          chmod +x yak
 
-      - name: Build yak package (${{ matrix.yak_platform }} / ${{ matrix.rhino_target }})
+      - name: Build yak package (cross-platform, ${{ matrix.rhino_target }})
         shell: bash
         run: |
-          "$GITHUB_WORKSPACE/${{ matrix.yak_bin }}" build --platform ${{ matrix.yak_platform }}
+          "$GITHUB_WORKSPACE/yak" build
         working-directory: rhino/plugin/bin/${{ matrix.rhino_target }}/Release
 
       - name: Upload yak artifact
         uses: actions/upload-artifact@v5
         with:
-          name: rhino-mcp-platform-${{ matrix.rhino_target }}-${{ matrix.yak_platform }}
+          name: rhino-mcp-platform-${{ matrix.rhino_target }}
           path: rhino/plugin/bin/${{ matrix.rhino_target }}/Release/*.yak
           if-no-files-found: error
           retention-days: 7
