@@ -99,6 +99,7 @@ if (r.considered.length === 0) {
   try {
     child = spawn(r.picked.path, process.argv.slice(2), {
       stdio: ["pipe", "pipe", "inherit"],
+      windowsHide: true,
     });
   } catch (err) {
     spawnFailed(err);
