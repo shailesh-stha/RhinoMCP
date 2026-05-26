@@ -248,24 +248,38 @@ test("integration: real router answers initialize over stdio", { skip: !isSuppor
     params: { protocolVersion: "2024-11-05", capabilities: {}, clientInfo: { name: "ci", version: "1.0" } },
   }) + "\n";
 
-  // Use async spawn rather than spawnSync's `input` mode: that closes stdin
-  // the instant the message is written, and the .NET MCP host's stdio reader
-  // sees EOF before it flushes the initialize response — the test would see
-  // empty stdout even though the router processed the request.
+  // Two stdio hazards we have to dodge:
+  //  - spawnSync's `input` closes stdin the instant the bytes land, and the
+  //    .NET MCP host can see EOF before it has flushed the initialize response.
+  //  - On win-arm64 in CI we observed the launcher exiting before its own
+  //    process.stdout pipe to this test had drained: the router did process
+  //    the initialize (visible in stderr) but the response never reached us.
+  // So: keep stdin open, read stdout event-driven until the response arrives,
+  // then close stdin and let the router shut down cleanly.
   const child = spawn(process.execPath, [SHARED_LAUNCHER], { env: { ...process.env, ...env } });
   let stdout = "";
   let stderr = "";
-  child.stdout.on("data", d => { stdout += d.toString(); });
+  const responseRe = /"name"\s*:\s*"rhino-mcp-router"/;
+  const sawResponse = new Promise(resolve => {
+    child.stdout.on("data", d => {
+      stdout += d.toString();
+      if (responseRe.test(stdout)) resolve(true);
+    });
+    child.stdout.on("end", () => resolve(false));
+  });
   child.stderr.on("data", d => { stderr += d.toString(); });
 
   child.stdin.write(initMsg);
-  await delay(1500);  // let the router boot + respond before EOF
-  child.stdin.end();
 
+  const timeout = delay(10000).then(() => "timeout");
+  const got = await Promise.race([sawResponse, timeout]);
+
+  child.stdin.end();
   const exitCode = await new Promise(resolve => child.once("close", resolve));
 
   assert.equal(exitCode, 0, `launcher exit=${exitCode}\n--- stdout ---\n${stdout}\n--- stderr ---\n${stderr}`);
-  assert.match(stdout, /"name"\s*:\s*"rhino-mcp-router"/, `expected initialize response on stdout\n--- stdout ---\n${stdout}\n--- stderr ---\n${stderr}`);
+  assert.notEqual(got, "timeout", `timed out waiting for initialize response\n--- stdout ---\n${stdout}\n--- stderr ---\n${stderr}`);
+  assert.match(stdout, responseRe, `expected initialize response on stdout\n--- stdout ---\n${stdout}\n--- stderr ---\n${stderr}`);
 });
 
 // --- install-fallback (pseudo-MCP) ------------------------------------------

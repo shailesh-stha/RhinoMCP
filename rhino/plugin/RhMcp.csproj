@@ -64,18 +64,18 @@
   </Target>
 
   <!--
-    The router ships as a self-contained single-file binary inside the .yak.
-    Yak tags packages by OS but not by CPU architecture, so a Windows .yak has to
-    carry both x64 and arm64 router binaries; the launcher picks at runtime.
-    RouterRids is a semicolon-separated list — default infers from host OS.
-    NOTE: when passed via the command line (-p:RouterRids=...), the value must
-    use %3B in place of ; (MSBuild's -p: switch otherwise splits on ;).
-    The ItemGroup below uses [MSBuild]::Unescape so the escaped form decodes
-    back into a real semicolon string that the Include splitter sees.
+    The yak bundles one router binary per RID; the launcher picks at runtime.
+    macOS hosts can build everything (Windows is framework-dependent, cross-
+    compiles fine); Windows hosts can't AOT-compile the macOS router, so yaks
+    built on Windows are Windows-only.
+
+    RouterRids is a semicolon list. When passed via -p:RouterRids=..., escape
+    ; as %3B (MSBuild's -p: otherwise splits on ;); [MSBuild]::Unescape below
+    decodes it back.
   -->
   <PropertyGroup>
     <RouterRids Condition="'$(RouterRids)' == '' AND $([MSBuild]::IsOSPlatform('Windows'))">win-x64;win-arm64</RouterRids>
-    <RouterRids Condition="'$(RouterRids)' == ''">osx-arm64</RouterRids>
+    <RouterRids Condition="'$(RouterRids)' == ''">osx-arm64;win-x64;win-arm64</RouterRids>
   </PropertyGroup>
 
   <!--
