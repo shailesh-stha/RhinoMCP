@@ -9,6 +9,8 @@ public class MCPStartCommand : Command
 
     public override string EnglishName => "MCPStart";
 
+    protected override string CommandContextHelpUrl => "https://mcneel.github.io/RhinoMCP";
+
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
         int port = RhinoMcpHost.GetNextPort();
