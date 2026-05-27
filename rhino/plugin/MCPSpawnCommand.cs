@@ -13,6 +13,8 @@ public class MCPSpawnCommand : Command
 
     public override string EnglishName => "MCPSpawn";
 
+    protected override string CommandContextHelpUrl => "https://mcneel.github.io/RhinoMCP";
+
     protected override Result RunCommand(RhinoDoc doc, RunMode mode)
     {
         string? portStr = Environment.GetEnvironmentVariable(PortEnvVar);

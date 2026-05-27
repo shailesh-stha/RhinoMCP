@@ -12,6 +12,9 @@ on:
       - 'docs/**'
       - '.github/workflows/docs.yml'
 
+permissions:
+  contents: write   # release job creates tags + releases
+
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -89,3 +92,86 @@ jobs:
           path: rhino/plugin/bin/${{ matrix.rhino_target }}/Release/*.yak
           if-no-files-found: error
           retention-days: 7
+
+  release:
+    # Publish the built .yak packages to the Rhino PackageManager. Version-driven
+    # and idempotent like connector-release.yml: keyed off a plugin-v{version} tag,
+    # so a plain push only releases when manifest.yml's version actually changes.
+    # Gated to pushes on main — never runs on PRs.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: macos-latest
+    needs: package
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Read plugin version
+        id: ver
+        shell: bash
+        run: |
+          VERSION=$(grep '^version:' rhino/plugin/manifest.yml | awk '{print $2}')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=plugin-v$VERSION" >> "$GITHUB_OUTPUT"
+          [[ "$VERSION" == *-* ]] && echo "prerelease=true" >> "$GITHUB_OUTPUT" || echo "prerelease=false" >> "$GITHUB_OUTPUT"
+
+      - name: Check whether release already exists
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "${{ steps.ver.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Release ${{ steps.ver.outputs.tag }} exists - nothing to release."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "New version ${{ steps.ver.outputs.version }} - will release."
+          fi
+
+      - name: Download R8 yak artifact
+        if: steps.check.outputs.exists == 'false'
+        uses: actions/download-artifact@v8
+        with:
+          name: rhino-mcp-platform-R8
+          path: dist/R8
+
+      - name: Download R9 yak artifact
+        if: steps.check.outputs.exists == 'false'
+        uses: actions/download-artifact@v8
+        with:
+          name: rhino-mcp-platform-R9
+          path: dist/R9
+
+      - name: Create GitHub Release (creates tag atomically)
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.ver.outputs.tag }}" \
+            dist/R8/*.yak dist/R9/*.yak \
+            --title "Plugin ${{ steps.ver.outputs.version }}" \
+            --target "${{ github.sha }}" \
+            --generate-notes \
+            ${{ steps.ver.outputs.prerelease == 'true' && '--prerelease' || '' }}
+
+      - name: Download yak CLI
+        if: steps.check.outputs.exists == 'false'
+        shell: bash
+        run: |
+          curl -fsSL -o yak https://files.mcneel.com/yak/tools/0.13.0/mac/yak
+          chmod +x yak
+
+      - name: Push packages to PackageManager
+        if: steps.check.outputs.exists == 'false'
+        env:
+          YAK_TOKEN: ${{ secrets.YAK_TOKEN }}
+        shell: bash
+        run: |
+          for pkg in dist/R8/*.yak dist/R9/*.yak; do
+            echo "Pushing $pkg"
+            ./yak push "$pkg"
+          done
