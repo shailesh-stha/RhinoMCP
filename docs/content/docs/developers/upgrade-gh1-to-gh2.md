@@ -14,7 +14,9 @@ keywords:
 
 Rhino 9 ships Grasshopper 2 alongside Grasshopper 1. If you have a GH1 plugin and you want to try upgrading to GH2, this is a perfect use of an AI agent and the Rhino MCP server. The MCP exposes parallel `g1_*` and `g2_*` tool families, so the assistant can place a GH1 component and its new GH2 counterpart on their respective canvases in the same session and compare what they solve to.
 
-We'll use [Voxelizer](https://github.com/ytakzk/Voxelizer) as the running example: a small, single-component GH1 plugin that's easy to follow end to end.
+We'll use Voxelizer as the running example: a small, single-component GH1 plugin that's easy to follow end to end.
+
+{{< github "https://github.com/ytakzk/Voxelizer" >}}
 
 ## The loop
 

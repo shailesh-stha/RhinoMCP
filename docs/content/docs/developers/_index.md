@@ -24,9 +24,9 @@ These pages are **not** tutorials on how to do the conversion by hand. The goal 
   
   {{< card link="upgrade-gh1-to-gh2" title="Upgrade GH1 components to GH2" subtitle="Scaffold GH2 equivalents and verify them side-by-side on a GH1 + GH2 canvas." >}}
   
+  <!-- draft
   {{< card link="plugin-prototyping" title="Prototype a plugin" subtitle="\"Make me a plugin that does X.\" Scaffold, build, load, exercise, all through the MCP loop." >}}
   
-  <!-- draft
   {{< card link="windows-to-cross-platform" title="Make a Windows plugin cross-platform" subtitle="Replace P/Invokes, registry calls, and other Windows-isms so the plugin runs on Mac." >}}
   
   {{< card link="wpf-to-eto" title="Convert a WPF UI to Eto" subtitle="Port a Windows-only WPF UI to Eto.Forms so the plugin runs on Mac too." >}}

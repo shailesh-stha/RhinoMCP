@@ -4,6 +4,7 @@ linkTitle: Plugin prototyping
 weight: 4
 author: Callum
 editor: SteveF
+draft: true
 keywords:
   - plugin prototyping
   - scaffolding
@@ -11,7 +12,7 @@ keywords:
   - rapid prototyping
 ---
 
-If you've ever wanted to try a plugin idea but didn't have the time to scaffold the project, write the manifest, wire up a command, build, load, debug, repeat: this is what Rhino MCP plus an AI assistant removes. Describe what you want the plugin to do, and the assistant can scaffold it, build it, load it into a running Rhino, exercise its commands, and iterate on what it sees.
+If you've ever wanted to try a plugin idea but didn't have the time to scaffold the project, write the manifest, wire up a command, build, load, debug, repeat: this is something that the Rhino MCP and an AI assistant can do. Describe what you want the plugin to do, and the assistant can scaffold it, build it, load it into a running Rhino, exercise commands, figure out crashes, and iterate until complete.
 
 This is closer to "rapid prototyping a plugin idea" than "ship a production plugin." The output is a starting point you can keep developing, or throw away once you've decided whether the idea was worth pursuing.
 
