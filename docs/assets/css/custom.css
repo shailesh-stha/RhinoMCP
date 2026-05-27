@@ -460,3 +460,49 @@ main#content h6 { font-weight: 700; }
 .ai-prompt-body p {
   margin: 0.5em 0;
 }
+
+.gh-repo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.25rem 0;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.02);
+  color: inherit;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.gh-repo:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+.dark .gh-repo {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dark .gh-repo:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.gh-repo-icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.gh-repo-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.gh-repo-arrow {
+  display: inline-flex;
+  flex-shrink: 0;
+  opacity: 0.55;
+}

@@ -18,9 +18,9 @@ If you have a Rhino plugin still targeting `net45` or `net48`, you'll want to mo
 
 ## An Example
 
-// TODO : Better Github URL shortcode https://github.com/sbaer/selcommands
-
 As an example we'll upgrade this simple `net45` plugin written by [Steve Baer](https://discourse.mcneel.com/u/stevebaer/summary). Checkout the code, and open your AI agent at the path of the locally cloned repo.
+
+{{< github "https://github.com/sbaer/selcommands" >}}
 
 ## The prompt
 
@@ -51,4 +51,3 @@ When your AI Assistant is done it is very important to review all of the changes
 - **Directory.Build.Props.**
 - **Updated Nuget references**
 - **Any updated commands** 
-- **YAK manifest**
