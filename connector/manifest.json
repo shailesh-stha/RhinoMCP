@@ -22,6 +22,9 @@
   "screenshots": [
     "screenshots/casa-rhino.png"
   ],
+  "privacy_policies": [
+    "https://github.com/mcneel/RhinoMCP/blob/main/PRIVACY.md"
+  ],
   "server": {
     "type": "node",
     "entry_point": "router-launcher.mjs",
