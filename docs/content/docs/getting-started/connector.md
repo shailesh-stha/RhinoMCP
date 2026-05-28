@@ -49,7 +49,7 @@ Install the `Rhino-MCP-Platform` plugin into Rhino using Yak (Rhino's Package Ma
 4. In Rhino, run the `MCPStart` command to confirm the plugin is available.
 
 To upgrade an existing install, run `yak update Rhino-MCP-Platform`. To remove it, run `yak uninstall Rhino-MCP-Platform`.
-{{< prompt />}}
+{{</ prompt >}}
 
 ## Try it out
 
