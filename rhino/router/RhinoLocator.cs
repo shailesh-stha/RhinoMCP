@@ -59,7 +59,7 @@ public class RhinoLocator
             };
             // Without this guard an unknown version resolves to "/Applications/",
             // which Directory.Exists trivially confirms — spawn then attempts
-            // `open -a /Applications/` and we burn the full 60s startup timeout
+            // `open -a /Applications/` and we burn the full startup timeout
             // before reporting failure. Fail fast with rhino_not_installed instead.
             foreach (string appName in appNames)
             {

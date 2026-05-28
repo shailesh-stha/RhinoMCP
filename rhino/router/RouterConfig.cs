@@ -1,8 +1,8 @@
 namespace RhMcp.Router;
 
-public record RouterConfig(string DefaultVersion, int StartupTimeoutSeconds = 60)
+public record RouterConfig(string DefaultVersion, int StartupTimeoutSeconds = 120)
 {
-    public const int DefaultStartupTimeoutSeconds = 60;
+    public const int DefaultStartupTimeoutSeconds = 120;
 
     // Env var fallback for the startup timeout; the `--startup-timeout` CLI arg wins.
     public const string StartupTimeoutEnvVar = "RHINO_MCP_STARTUP_TIMEOUT";

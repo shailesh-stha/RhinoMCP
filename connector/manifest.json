@@ -53,7 +53,7 @@
       "title": "Rhino Startup Timeout (seconds)",
       "description": "How long to wait for Rhino to launch and become ready before giving up. Raise this on slow machines or when a license/EULA dialog needs clearing.",
       "required": false,
-      "default": 60
+      "default": 120
     }
   },
   "prompts": [

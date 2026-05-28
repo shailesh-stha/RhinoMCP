@@ -78,8 +78,8 @@ public sealed class RhinoMcpRouter : IAsyncDisposable
         // Close every slot the router is tracking before tearing down the
         // transport. On macOS the app is single-instance: leaving a Rhino
         // alive between tests means the next `open -a` just foregrounds it,
-        // the new port never binds, and the spawn waits the full 60s
-        // SpawnTimeoutSeconds before failing. Cooperative close keeps tests
+        // the new port never binds, and the spawn waits the full
+        // startup timeout before failing. Cooperative close keeps tests
         // independent and fast.
         try
         {
