@@ -26,7 +26,7 @@ Full guides live at **[mcneel.github.io/RhinoMCP](https://mcneel.github.io/Rhino
 
 # Quick start
 
-The fastest path is [Claude Desktop](https://mcneel.github.io/RhinoMCP/docs/getting-started/connector/): install the [Rhino3d connector](https://github.com/mcneel/RhinoMCP/releases/download/connector-v0.1.1/connector.mcpb) and let it install the Rhino plugin for you. For other assistants, see [Getting Started](https://mcneel.github.io/RhinoMCP/docs/getting-started/).
+The fastest path is [Claude Desktop](https://mcneel.github.io/RhinoMCP/docs/getting-started/connector/): install the [Rhino3d connector](https://github.com/mcneel/RhinoMCP/releases/download/connector-v0.1.2/connector.mcpb) and let it install the Rhino plugin for you. For other assistants, see [Getting Started](https://mcneel.github.io/RhinoMCP/docs/getting-started/).
 
 # Building & Debugging
 
