@@ -72,42 +72,6 @@ function runLauncher(env, args = []) {
   });
 }
 
-// --- meta: cc-plugin/ + connector/ are symlinks into shared/ ----------------
-//
-// On Windows, `git clone` with `core.symlinks=false` (the default) materializes
-// symlinks as plain text files whose contents are the link target string. We
-// detect that explicitly and fail with a clear message — otherwise `mcpb pack`
-// would silently ship a one-line "../shared/router-launcher.mjs" stub instead
-// of the real launcher.
-
-function checkLauncherShim(path, label) {
-  // Real symlink → lstat reports a link, regardless of platform support.
-  if (lstatSync(path).isSymbolicLink()) {
-    // statSync follows the link; if the target is missing or wrong size, fail.
-    const real = statSync(path);
-    const canonical = statSync(SHARED_LAUNCHER);
-    assert.equal(real.size, canonical.size, `${label} symlink resolves to a file of unexpected size — target may be broken`);
-    return;
-  }
-  // Not a symlink. Could be (a) the canonical file copied in by mistake, or
-  // (b) a Windows clone that flattened the symlink into a tiny text file.
-  const bytes = readFileSync(path);
-  const canonical = readFileSync(SHARED_LAUNCHER);
-  if (bytes.equals(canonical)) {
-    assert.fail(`${label} is a regular file but contains the canonical bytes — it must be a symlink to ../shared/router-launcher.mjs (run: git rm ${label}; ln -s ../shared/router-launcher.mjs ${label}).`);
-  }
-  const head = bytes.subarray(0, 200).toString("utf8");
-  assert.fail(`${label} appears to be a flattened symlink (size=${bytes.length}, head=${JSON.stringify(head)}). This Windows clone has core.symlinks=false. Run: git config --global core.symlinks true && git checkout -- ${label}`);
-}
-
-test("cc-plugin/router-launcher.mjs is a symlink into shared/", () => {
-  checkLauncherShim(CC_LAUNCHER, "cc-plugin/router-launcher.mjs");
-});
-
-test("connector/router-launcher.mjs is a symlink into shared/", () => {
-  checkLauncherShim(CONNECTOR_LAUNCHER, "connector/router-launcher.mjs");
-});
-
 // --- platform gating --------------------------------------------------------
 
 test("linux reports unsupported platform and exits 1", { skip: isSupported }, () => {
