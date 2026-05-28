@@ -16,8 +16,10 @@ Short walk-throughs that show what Rhino MCP can do. Each page starts with a sin
 
 {{< cards >}}
   {{< card link="model-from-description" title="Model from an image" subtitle="Turn a photo into geometry." >}}
+<!-- draft
   {{< card link="generate-variations" title="Generate variations" subtitle="Sweep through options without rebuilding by hand." >}}
   {{< card link="inspect-and-report" title="Inspect and report" subtitle="Ask what's in the document and get a structured answer." >}}
+-->
   {{< card link="build-grasshopper" title="Build Grasshopper definitions" subtitle="Wire up components from a prompt." >}}
   {{< card link="layers" title="Assign to Layers" subtitle="One prompt, a chore done." >}}
 {{< /cards >}}

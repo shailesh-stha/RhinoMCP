@@ -3,6 +3,7 @@ title: Generate variations
 weight: 20
 author: Callum
 editor: SteveF
+draft: true
 keywords:
   - variations
   - parametric sweep
