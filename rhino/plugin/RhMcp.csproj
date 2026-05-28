@@ -3,6 +3,8 @@
   <PropertyGroup>
     <!-- Rhino 9: net8.0 -->
     <RhinoTarget Condition="'$(RhinoTarget)' == ''">R9</RhinoTarget>
+    <PluginOS Condition="'$(PluginOS)' == '' AND $([MSBuild]::IsOSPlatform('Windows'))">win</PluginOS>
+    <PluginOS Condition="'$(PluginOS)' == ''">osx</PluginOS>
     <TargetFrameworks>net8.0</TargetFrameworks>
     <LangVersion>12</LangVersion>
     <EnableDynamicLoading>true</EnableDynamicLoading>
@@ -12,15 +14,8 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <RootNamespace>RhMcp</RootNamespace>
     <AssemblyName>RhinoMcpPlatform</AssemblyName>
-    <!--
-      Segment bin/ by RhinoTarget so R8 and R9 builds coexist. Without this,
-      flipping RhinoTarget clobbers the previous yak staging dir and Rhino 8
-      ends up with a Rhino 9 build (or vice versa). obj/ is intentionally
-      shared — segmenting it from a csproj is fiddly with SDK-style projects,
-      and the cost is just a NuGet restore + recompile when flipping targets.
-    -->
-    <BaseOutputPath>$(MSBuildProjectDirectory)/bin/$(RhinoTarget)/</BaseOutputPath>
-    <YakStagingDir>$(MSBuildProjectDirectory)/bin/$(RhinoTarget)/$(Configuration)</YakStagingDir>
+    <BaseOutputPath>$(MSBuildProjectDirectory)/bin/$(RhinoTarget)-$(PluginOS)/</BaseOutputPath>
+    <YakStagingDir>$(MSBuildProjectDirectory)/bin/$(RhinoTarget)-$(PluginOS)/$(Configuration)</YakStagingDir>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -32,6 +27,15 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <AspNetCoreRuntimeVersion>8.0.*</AspNetCoreRuntimeVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App.Runtime.win-x64" Version="$(AspNetCoreRuntimeVersion)" GeneratePathProperty="true" ExcludeAssets="all" PrivateAssets="all" Condition="'$(PluginOS)' == 'win'" />
+    <PackageReference Include="Microsoft.AspNetCore.App.Runtime.osx-arm64" Version="$(AspNetCoreRuntimeVersion)" GeneratePathProperty="true" ExcludeAssets="all" PrivateAssets="all" Condition="'$(PluginOS)' == 'osx'" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(RhinoTarget)' == 'R8'">
@@ -50,32 +54,14 @@
     <Compile Remove="Resources/GH2/**/*.cs" />
   </ItemGroup>
 
-  <!--
-    Yak for a net8.0 plugin is built from the parent of the TFM folder, so the
-    manifest and icon live in $(YakStagingDir) (sibling to `net8.0/`). We use
-    that explicit path rather than $(OutputPath)../ because TargetFrameworks
-    (plural) enables cross-targeting: AfterTargets="Build" can run in the outer
-    context where $(OutputPath) is $(YakStagingDir)/ (no TFM), which makes
-    `$(OutputPath)../` resolve to `bin/$(RhinoTarget)/` — one level too high.
-  -->
   <Target Name="BuildYakPackage" AfterTargets="Build">
     <Copy SourceFiles="$(MSBuildProjectDirectory)/icon.png" DestinationFolder="$(YakStagingDir)/" SkipUnchangedFiles="true" />
     <Copy SourceFiles="$(MSBuildProjectDirectory)/manifest.yml" DestinationFolder="$(YakStagingDir)/" SkipUnchangedFiles="true" />
   </Target>
 
-  <!--
-    The yak bundles one router binary per RID; the launcher picks at runtime.
-    macOS hosts can build everything (Windows is framework-dependent, cross-
-    compiles fine); Windows hosts can't AOT-compile the macOS router, so yaks
-    built on Windows are Windows-only.
-
-    RouterRids is a semicolon list. When passed via -p:RouterRids=..., escape
-    ; as %3B (MSBuild's -p: otherwise splits on ;); [MSBuild]::Unescape below
-    decodes it back.
-  -->
   <PropertyGroup>
-    <RouterRids Condition="'$(RouterRids)' == '' AND $([MSBuild]::IsOSPlatform('Windows'))">win-x64;win-arm64</RouterRids>
-    <RouterRids Condition="'$(RouterRids)' == ''">osx-arm64;win-x64;win-arm64</RouterRids>
+    <RouterRids Condition="'$(RouterRids)' == '' AND '$(PluginOS)' == 'osx'">osx-arm64</RouterRids>
+    <RouterRids Condition="'$(RouterRids)' == ''">win-x64;win-arm64</RouterRids>
   </PropertyGroup>
 
   <!--
@@ -84,92 +70,41 @@
     <ItemGroup>
       <_RouterRid Include="$([MSBuild]::Unescape($(RouterRids)))" />
     </ItemGroup>
-    <!--
-      Publish one RID at a time via Exec. We use Exec rather than the <MSBuild>
-      task because <MSBuild> doesn't reliably batch on %() in its Properties
-      attribute when no item-collection is referenced in Projects — it ends up
-      joining all RIDs and passing them as a single RuntimeIdentifier value,
-      which NETSDK1083 then rejects. Exec batches per item on %() in Command.
-    -->
+    <!-- Publish one RID at a time via Exec -->
     <Exec WorkingDirectory="$(MSBuildProjectDirectory)/../router"
           Command="dotnet publish Router.csproj --configuration $(Configuration) --runtime %(_RouterRid.Identity) -p:RhinoTarget=$(RhinoTarget) --output &quot;$(YakStagingDir)/router/%(_RouterRid.Identity)&quot; --nologo" />
-    <!--
-      Strip debug artifacts after publish. The router's Release config sets
-      NativeDebugSymbols=false / DebugType=none, but NativeAOT's macOS publish
-      still emits a .dsym bundle (the linker strip step ignores those flags).
-      Delete is idempotent so non-existent paths are fine on the other RID.
-    -->
+    <!-- Strip debug artifacts after publish -->
     <RemoveDir Directories="@(_RouterRid->'$(YakStagingDir)/router/%(Identity)/rhino-mcp-router.dsym')" />
     <Delete Files="@(_RouterRid->'$(YakStagingDir)/router/%(Identity)/rhino-mcp-router.pdb')" />
     <Message Importance="high" Text="[Rhino MCP] Bundled router RIDs: $(RouterRids)" />
   </Target>
 
-  <!--
-    Rhino doesn't ship the ASP.NET Core shared framework, so we copy it from the
-    build machine's .NET install into the plugin output. Picks the highest 8.0.x
-    runtime present on the machine.
-  -->
-  <UsingTask TaskName="PickLatestAspNetCore" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
-    <ParameterGroup>
-      <SharedFxRoot ParameterType="System.String" Required="true" />
-      <MajorMinor ParameterType="System.String" Required="true" />
-      <Result ParameterType="System.String" Output="true" />
-    </ParameterGroup>
-    <Task>
-      <Using Namespace="System" />
-      <Using Namespace="System.IO" />
-      <Using Namespace="System.Linq" />
-      <Code Type="Fragment" Language="cs"><![CDATA[
-        if (!Directory.Exists(SharedFxRoot)) { Result = ""; return true; }
-        Result = Directory.GetDirectories(SharedFxRoot, MajorMinor + ".*")
-          .Select(p => new { Path = p, Name = Path.GetFileName(p) })
-          .Where(x => Version.TryParse(x.Name, out _))
-          .OrderByDescending(x => Version.Parse(x.Name))
-          .Select(x => x.Path)
-          .FirstOrDefault() ?? "";
-      ]]></Code>
-    </Task>
-  </UsingTask>
-
-  <Target Name="BundleAspNetCoreFramework" AfterTargets="Build">
+  <!-- Bundle ASP.NET -->
+  <Target Name="BundleAspNetCoreFramework" AfterTargets="Build" Condition="'$(TargetFramework)' != ''">
     <PropertyGroup>
-      <_DotnetRoot Condition="'$(DOTNET_ROOT)' != ''">$(DOTNET_ROOT)</_DotnetRoot>
-      <!-- Bundle the x64 ASP.NET Core framework: Rhino is x64 and the framework's
-           R2R images are arch-stamped, so an ARM64 build host's copy won't load
-           (BadImageFormatException). On ARM64 hosts x64 sits under dotnet\x64. -->
-      <_DotnetRoot Condition="'$(_DotnetRoot)' == '' AND $([MSBuild]::IsOSPlatform('Windows')) AND Exists('$(ProgramFiles)\dotnet\x64\shared\Microsoft.AspNetCore.App')">$(ProgramFiles)\dotnet\x64</_DotnetRoot>
-      <_DotnetRoot Condition="'$(_DotnetRoot)' == '' AND $([MSBuild]::IsOSPlatform('Windows'))">$(ProgramFiles)\dotnet</_DotnetRoot>
-      <_DotnetRoot Condition="'$(_DotnetRoot)' == ''">/usr/local/share/dotnet</_DotnetRoot>
+      <_FxDir Condition="'$(PluginOS)' == 'win'">$(PkgMicrosoft_AspNetCore_App_Runtime_win-x64)/runtimes/win-x64/lib/net8.0</_FxDir>
+      <_FxDir Condition="'$(PluginOS)' == 'osx'">$(PkgMicrosoft_AspNetCore_App_Runtime_osx-arm64)/runtimes/osx-arm64/lib/net8.0</_FxDir>
     </PropertyGroup>
-    <PickLatestAspNetCore SharedFxRoot="$(_DotnetRoot)/shared/Microsoft.AspNetCore.App" MajorMinor="8.0">
-      <Output TaskParameter="Result" PropertyName="_AspNetCorePath" />
-    </PickLatestAspNetCore>
-    <Error Condition="'$(_AspNetCorePath)' == ''" Text="Could not find Microsoft.AspNetCore.App 8.0.x under $(_DotnetRoot)/shared/Microsoft.AspNetCore.App. Install the ASP.NET Core 8.0 runtime." />
+    <Error Condition="!Exists('$(_FxDir)')" Text="ASP.NET Core runtime pack not found at '$(_FxDir)' (PluginOS=$(PluginOS)). Run 'dotnet restore' for this PluginOS first." />
     <ItemGroup>
-      <_AspNetCoreFiles Include="$(_AspNetCorePath)/*.dll"
+      <_AspNetCoreFiles Include="$(_FxDir)/*.dll"
         Exclude="
-          $(_AspNetCorePath)/Microsoft.AspNetCore.Authentication.BearerToken.dll;
-          $(_AspNetCorePath)/Microsoft.AspNetCore.Authentication.Cookies.dll;
-          $(_AspNetCorePath)/Microsoft.AspNetCore.Authentication.OAuth.dll;
-          $(_AspNetCorePath)/Microsoft.AspNetCore.Components*.dll;
-          $(_AspNetCorePath)/Microsoft.AspNetCore.Identity*.dll;
-          $(_AspNetCorePath)/Microsoft.AspNetCore.Mvc*.dll;
-          $(_AspNetCorePath)/Microsoft.AspNetCore.Razor*.dll;
-          $(_AspNetCorePath)/Microsoft.AspNetCore.Server.HttpSys.dll;
-          $(_AspNetCorePath)/Microsoft.AspNetCore.Server.IIS*.dll;
-          $(_AspNetCorePath)/Microsoft.AspNetCore.SignalR*.dll;
-          $(_AspNetCorePath)/Microsoft.AspNetCore.StaticFiles.dll;
-          $(_AspNetCorePath)/Microsoft.Extensions.Identity*.dll
+          $(_FxDir)/Microsoft.AspNetCore.Authentication.BearerToken.dll;
+          $(_FxDir)/Microsoft.AspNetCore.Authentication.Cookies.dll;
+          $(_FxDir)/Microsoft.AspNetCore.Authentication.OAuth.dll;
+          $(_FxDir)/Microsoft.AspNetCore.Components*.dll;
+          $(_FxDir)/Microsoft.AspNetCore.Identity*.dll;
+          $(_FxDir)/Microsoft.AspNetCore.Mvc*.dll;
+          $(_FxDir)/Microsoft.AspNetCore.Razor*.dll;
+          $(_FxDir)/Microsoft.AspNetCore.Server.HttpSys.dll;
+          $(_FxDir)/Microsoft.AspNetCore.Server.IIS*.dll;
+          $(_FxDir)/Microsoft.AspNetCore.SignalR*.dll;
+          $(_FxDir)/Microsoft.AspNetCore.StaticFiles.dll;
+          $(_FxDir)/Microsoft.Extensions.Identity*.dll
         " />
     </ItemGroup>
-    <!--
-      Hardcode the net8.0/ destination instead of using $(OutputPath). Same
-      cross-targeting quirk as BuildYakPackage: at outer-build context with
-      TargetFrameworks plural, $(OutputPath) is $(YakStagingDir)/ (no TFM
-      subdir), which would scatter ~100 framework DLLs at the staging root.
-    -->
     <Copy SourceFiles="@(_AspNetCoreFiles)" DestinationFolder="$(YakStagingDir)/net8.0/" SkipUnchangedFiles="true" />
-    <Message Importance="high" Text="[Rhino MCP] Bundled ASP.NET Core from $(_AspNetCorePath) (subset filter applied)" />
+    <Message Importance="high" Text="[Rhino MCP] Bundled ASP.NET Core ($(PluginOS)) from $(_FxDir)" />
   </Target>
 
 </Project>
