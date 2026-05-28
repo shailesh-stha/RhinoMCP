@@ -25,9 +25,3 @@ Model this image in Rhino
 The assistant will create the kettle, likely it won't be exact but it will be the general gist of the photo.
 
 ![AI Kettle](/examples/ai-kettle.png)
-
-## More like this
-
-<blockquote class="page-note">
-See the <a href="../../recipes#modeling">Modeling</a> section of the recipes for more starting points.
-</blockquote>

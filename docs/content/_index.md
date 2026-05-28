@@ -65,18 +65,24 @@ The **Rhino MCP Platform** is a free MCP from McNeel, the makers of Rhino & Gras
 
 {{< cards >}}
 
-  {{< card link="docs/try-it-out/examples/model-from-description" title="Model from a description" subtitle="\"Make a parametric park bench, 1.6m long, with five wooden slats.\"" >}}
+  {{< card link="docs/try-it-out/examples/model-from-image" title="Model from an image" subtitle="\"Create a 3d model from an image\"" >}}
 
+<!-- draft
   {{< card link="docs/try-it-out/examples/generate-variations" title="Generate variations" subtitle="\"Create 30 columns in a grid, randomize their heights, and color them by height.\"" >}}
 
   {{< card link="docs/try-it-out/examples/inspect-and-report" title="Inspect and report" subtitle="\"What's in this document? Group it by layer and tell me which objects are off-layer.\"" >}}
+-->
 
   {{< card link="docs/try-it-out/examples/build-grasshopper" title="Build Grasshopper definitions" subtitle="\"Make a Grasshopper definition that lofts a curve through these points.\"" >}}
 
-  {{< card link="docs/try-it-out/examples/automate" title="Automate the boring bits" subtitle="\"Rename every layer to title case and delete the empty ones.\"" >}}
+  {{< card link="docs/try-it-out/examples/layers" title="Automate layering" subtitle="\"Take a model and place all of its parts on layers.\"" >}}
 
 {{< /cards >}}
+
+<!-- TODO
 
 <blockquote class="page-note">
 See the <a href="docs/try-it-out/recipes">Recipes</a> for more ready-to-paste prompts.
 </blockquote>
+
+-->

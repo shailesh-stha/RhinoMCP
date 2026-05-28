@@ -10,6 +10,6 @@ keywords:
   - faq
 ---
 
-## AI Agent is stuck, looping for a long. time
+## AI Agent is stuck, looping for a long time.
 
 If your AI Agent is stuck, interrupt it and ask it why it is stuck. You can always instruct it to continue.
