@@ -5,14 +5,20 @@ namespace RhMcp;
 public class RhMcpPlugin : PlugIn
 {
 
-    public RhMcpPlugin()
+    protected override LoadReturnCode OnLoad(ref string errorMessage)
     {
-        Instance = this;
+        RhinoDoc.BeginOpenDocument += Register;
+        return base.OnLoad(ref errorMessage);
     }
 
-#pragma warning disable
-    public static RhMcpPlugin Instance { get; private set; }
-#pragma warning enable
+    private void Register(object? sender, DocumentOpenEventArgs e)
+    {
+        RhinoDoc.BeginOpenDocument -= Register;
 
+        int port = RhinoMcpHost.GetNextPort();
+        RhinoMcpHost.StartOrRestart(e.Document, port);
+    }
+
+    public override PlugInLoadTime LoadTime => PlugInLoadTime.AtStartup;
 
 }
