@@ -26,11 +26,25 @@ public static class RhinoMcpHost
     private const int DefaultPort = 10500;
     public static int GetNextPort()
     {
-        System.Net.Sockets.TcpListener listener = new(System.Net.IPAddress.Loopback, DefaultPort);
-        listener.Start(50);
-        int port = ((System.Net.IPEndPoint)listener.LocalEndpoint).Port;
-        listener.Stop();
-        return port;
+        int nextPort = DefaultPort;
+        if (Servers.Any())
+        {
+            nextPort = Servers.Max(s => s.Value.Port) + 1;
+        }
+
+        try
+        {
+            System.Net.Sockets.TcpListener listener = new(System.Net.IPAddress.Loopback, nextPort);
+            listener.Start();
+            int port = ((System.Net.IPEndPoint)listener.LocalEndpoint).Port;
+            listener.Stop();
+            return port;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return -1;
+        }
     }
 
     public static bool Start(RhinoDoc doc, int port)
