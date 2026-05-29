@@ -101,7 +101,12 @@ if (r.considered.length === 0) {
   }
   if (child) {
     process.stdin.pipe(child.stdin);
-    child.stdout.pipe(process.stdout);
+    // Filter blank lines — Claude Desktop fails the server on a bare newline.
+    const out = createInterface({ input: child.stdout });
+    out.on("line", line => {
+      if (line.trim() === "") return;
+      process.stdout.write(line + "\n");
+    });
   }
 }
 
