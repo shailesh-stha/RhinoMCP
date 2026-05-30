@@ -79,7 +79,7 @@ Each agent is tuned for a different kind of work. You can call them explicitly (
 ## Try it out
 
 <blockquote class="page-note">
-Open Claude Desktop, start a new chat, and follow the prompts on the <a href="../../try-it-out">Try It Out</a> page.
+Open Claude Code and follow the prompts on the <a href="../../try-it-out">Try It Out</a> page.
 </blockquote>
 
 <!--
