@@ -9,19 +9,23 @@
       "program": "",
       "osx": {
         "program": "/Applications/RhinoWIP.app/Contents/MacOS/Rhinoceros",
-        "args": ["-runscript=_MCPSpawn"],
+        "args": [
+          "-nosplash"
+        ],
+        "env": {
+          "RHINO_PACKAGE_DIRS": "${workspaceFolder}/rhino/plugin/bin/R9-osx/Debug",
+        }
       },
       "windows": {
         "program": "C:\\Program Files\\Rhino 9 WIP\\System\\Rhino.exe",
         "targetArchitecture": "x86_64",
         "args": [
           "/netcore",
-          "/runscript=_MCPSpawn _Enter"
-        ]
-      },
-      "env": {
-        "RHINO_PACKAGE_DIRS": "${workspaceFolder}/rhino/plugin/bin/R9/Debug",
-        "RHINO_MCP_AUTOSTART_PORT": "10500"
+          "/nosplash"
+        ],
+        "env": {
+          "RHINO_PACKAGE_DIRS": "${workspaceFolder}/rhino/plugin/bin/R9-win/Debug",
+        }
       },
       "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
@@ -35,19 +39,23 @@
       "program": "",
       "osx": {
         "program": "/Applications/Rhino 8.app/Contents/MacOS/Rhinoceros",
-        "args": ["-runscript=_MCPSpawn"],
+        "args": [
+          "-nosplash"
+        ],
+        "env": {
+          "RHINO_PACKAGE_DIRS": "${workspaceFolder}/rhino/plugin/bin/R8-osx/Debug",
+        }
       },
       "windows": {
         "program": "C:\\Program Files\\Rhino 8\\System\\Rhino.exe",
         "targetArchitecture": "x86_64",
         "args": [
           "/netcore",
-          "/runscript=_MCPSpawn _Enter"
-        ]
-      },
-      "env": {
-        "RHINO_PACKAGE_DIRS": "${workspaceFolder}/rhino/plugin/bin/R8/Debug",
-        "RHINO_MCP_AUTOSTART_PORT": "10500"
+          "/nosplash"
+        ],
+        "env": {
+          "RHINO_PACKAGE_DIRS": "${workspaceFolder}/rhino/plugin/bin/R8-win/Debug",
+        }
       },
       "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
@@ -58,7 +66,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "router: build + register + open claude",
-      "program": "${workspaceFolder}/rhino/router/bin/Debug/net8.0/rhino-mcp-router.dll",
+      "program": "${workspaceFolder}/rhino/router/bin/R9/Debug/net8.0/rhino-mcp-router.dll",
       "args": [],
       "cwd": "${workspaceFolder}/rhino/router",
       "stopAtEntry": false,
