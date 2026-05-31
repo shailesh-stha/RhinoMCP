@@ -50,6 +50,12 @@ The router defaults to Rhino 8. To target Rhino 9:
 - Grasshopper 2 tools (`gh2_`) require **Rhino 9 WIP**.
 - If you want to use Grasshopper 2, specify Rhino WIP to your AI Agent
 
+## The MCP Plugin doesn't load or show up in the package manager?
+
+- Net framework is not supported
+- Intel Macs are not supported
+- Update your Rhino to the latest release
+
 ## Anywhere else to ask?
 
 <blockquote class="page-note">
