@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -27,6 +28,13 @@ public class RhinoManager(
     private const int ChildPortBase = 10500;
     private int StartupTimeoutSeconds { get; } = config.StartupTimeoutSeconds;
     private static readonly TimeSpan StaleLaunchingMaxAge = TimeSpan.FromSeconds(90);
+
+    // Liveness-probe budget and retries. A non-listening port, if process is alive
+    // is treated as a transient blip, until it misses PortMissThreshold times in a row.
+    // If process is dead, it is still reaped immediately.
+    private static readonly TimeSpan ProbeTimeout = TimeSpan.FromSeconds(1);
+    private const int PortMissThreshold = 3;
+    private readonly ConcurrentDictionary<string, int> _portMisses = new();
 
     private readonly int _routerPid = Environment.ProcessId;
 
@@ -399,11 +407,44 @@ public class RhinoManager(
 
     // Pid AND port must both be alive: on Mac one listener can die while the shared
     // app keeps running; on Windows a zombie can leave the socket bound.
-    public bool IsAlive(ChildRhino c)
+    public static bool IsAlive(ChildRhino c)
     {
         if (c.Status != SlotStatus.Ready) return true; // launching rows are pending, not dead
         if (!IsProcessAlive(c.Pid)) return false;
-        if (!IsPortListening(c.Port)) return false;
+        if (ProbePort(c.Port) != PortProbe.Listening) return false;
+        return true;
+    }
+
+    // Whether a slot should be deleted.  
+    private bool ShouldReap(ChildRhino c)
+    {
+        if (c.Status != SlotStatus.Ready) return false; // launching rows are pending, not dead
+
+        // Process death is conclusive and reaped immediately.
+        if (!IsProcessAlive(c.Pid))
+        {
+            _portMisses.TryRemove(c.SlotId, out _);
+            return true;
+        }
+
+        // A non-listening port on a live process is treated as transient until
+        // PortMissThreshold consecutive misses. 
+        if (ProbePort(c.Port) == PortProbe.Listening)
+        {
+            // A successful probe resets the counter.
+            _portMisses.TryRemove(c.SlotId, out _);
+            return false;
+        }
+
+        int misses = _portMisses.AddOrUpdate(c.SlotId, 1, (_, n) => n + 1);
+        if (misses < PortMissThreshold)
+        {
+            log.LogDebug("Slot '{Slot}' port {Port} not answering (miss {Miss}/{Threshold}); deferring reap",
+                c.SlotId, c.Port, misses, PortMissThreshold);
+            return false;
+        }
+
+        _portMisses.TryRemove(c.SlotId, out _);
         return true;
     }
 
@@ -411,7 +452,7 @@ public class RhinoManager(
     {
         var c = store.Get(slotId);
         if (c is null) return false;
-        if (IsAlive(c)) return false;
+        if (!ShouldReap(c)) return false;
         store.Delete(slotId);
         log.LogWarning("Reaped dead slot '{Slot}' (pid {Pid}, port {Port}, Rhino {Version})",
             c.SlotId, c.Pid, c.Port, c.Version);
@@ -423,7 +464,7 @@ public class RhinoManager(
         var reaped = new List<ChildRhino>();
         foreach (var c in store.ListReady())
         {
-            if (IsAlive(c)) continue;
+            if (!ShouldReap(c)) continue;
             store.Delete(c.SlotId);
             reaped.Add(c);
         }
@@ -528,17 +569,34 @@ public class RhinoManager(
         return WaitResult.Timeout;
     }
 
-    private static bool IsPortListening(int port)
+    private static bool IsPortListening(int port) => ProbePort(port) == PortProbe.Listening;
+
+    private enum PortProbe { Listening, Refused, Inconclusive }
+
+    // Probe a localhost port, distinguishing an actively-refused connection
+    // (definitively nothing listening) from a timeout/error (inconclusive)
+    private static PortProbe ProbePort(int port)
     {
         try
         {
             using var client = new TcpClient();
-            var task = client.ConnectAsync("127.0.0.1", port);
-            return task.Wait(200) && client.Connected;
+            using var cts = new CancellationTokenSource(ProbeTimeout);
+            client.ConnectAsync("127.0.0.1", port, cts.Token).AsTask().GetAwaiter().GetResult();
+            return client.Connected ? PortProbe.Listening : PortProbe.Inconclusive;
+        }
+        catch (OperationCanceledException)
+        {
+            return PortProbe.Inconclusive;
+        }
+        catch (SocketException se)
+        {
+            return se.SocketErrorCode == SocketError.ConnectionRefused
+                ? PortProbe.Refused
+                : PortProbe.Inconclusive;
         }
         catch
         {
-            return false;
+            return PortProbe.Inconclusive;
         }
     }
 }
