@@ -19,7 +19,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.1.3</Version>
     <Title>Rhino MCP Platform</Title>
     <Company>McNeel</Company>
     <Description>MCP server plugin for Rhino</Description>
@@ -56,7 +55,11 @@
 
   <Target Name="BuildYakPackage" AfterTargets="Build">
     <Copy SourceFiles="$(MSBuildProjectDirectory)/icon.png" DestinationFolder="$(YakStagingDir)/" SkipUnchangedFiles="true" />
-    <Copy SourceFiles="$(MSBuildProjectDirectory)/manifest.yml" DestinationFolder="$(YakStagingDir)/" SkipUnchangedFiles="true" />
+    <PropertyGroup>
+      <_Manifest>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)/manifest.yml'))</_Manifest>
+      <_Manifest>$([System.Text.RegularExpressions.Regex]::Replace($(_Manifest), '(?m)^version:.*$', 'version: $(Version)'))</_Manifest>
+    </PropertyGroup>
+    <WriteLinesToFile File="$(YakStagingDir)/manifest.yml" Lines="$(_Manifest)" Overwrite="true" WriteOnlyWhenDifferent="true" />
   </Target>
 
   <PropertyGroup>
