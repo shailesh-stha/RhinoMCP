@@ -35,7 +35,7 @@ jsonOptions.Converters.Add(new LenientStringConverter());
 var mcpBuilder = builder.Services
     .AddMcpServer(o =>
     {
-        o.ServerInfo = new() { Name = "rhino-mcp-router", Version = "0.1.3" };
+        o.ServerInfo = new() { Name = "rhino-mcp-router", Version = typeof(RhinoManager).Assembly.GetName().Version?.ToString() ?? "0.0.0" };
     })
     .WithStdioServerTransport();
 

@@ -22,7 +22,7 @@ namespace RhMcp.Router;
 // is ephemeral runtime registry — wiping is correct on router upgrade.
 public sealed class SlotStore : IDisposable
 {
-    private const string CurrentRouterVersion = "0.1.3";
+    private static string CurrentRouterVersion => typeof(SlotStore).Assembly.GetName().Version?.ToString() ?? "0.0.0";
 
     private readonly SqliteConnection _conn;
     private readonly ILogger<SlotStore> _log;
